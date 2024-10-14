@@ -62,7 +62,6 @@ class DBAdapter:
     def select_person_nights(self):
         """
         Count number of nights for each person
-
         """
         request = f"""
             SELECT person_id, count(*) FROM task INNER JOIN shift on task.shift_id=shift.id FULL JOIN shift_label ON
@@ -75,9 +74,18 @@ class DBAdapter:
         """
         Count number of weekends for each person
         """
-
         request = f"""
             SELECT person_id, count(*) FROM task INNER JOIN task_label ON task_label.task_id=task.id where label='weekend' GROUP BY person_id
+        """
+        LOG.debug(request)
+        return self.cur.execute(request).fetchall()
+
+    def select_person_effective_hours(self):
+        """
+        Sum effective hours for each person
+        """
+        request = f"""
+            SELECT person_id, sum(duration) FROM task INNER JOIN shift ON shift.id=task.shift_id GROUP BY person_id
         """
         LOG.debug(request)
         return self.cur.execute(request).fetchall()

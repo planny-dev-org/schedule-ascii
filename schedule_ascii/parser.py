@@ -64,7 +64,7 @@ class JSONParser:
                     shift_data["id"],
                     shift_data["display_name"],
                     "",
-                    shift_data["effective_duration"],
+                    shift_data["effective_duration"] / 3600,
                     shift_data["start_time"],
                     shift_data["end_time"],
                 ),
@@ -92,7 +92,7 @@ class JSONParser:
 
         db_adapter.commit()
 
-        # store people nights
+        # store people aggregated data
         for person_id, night_count in db_adapter.select_person_nights():
             db_adapter.update(
                 "person", f"id='{person_id}'", f"night_count={night_count}"
@@ -101,6 +101,11 @@ class JSONParser:
         for person_id, weekend_count in db_adapter.select_person_weekends():
             db_adapter.update(
                 "person", f"id='{person_id}'", f"weekend_count={weekend_count}"
+            )
+
+        for person_id, effective_hours in db_adapter.select_person_effective_hours():
+            db_adapter.update(
+                "person", f"id='{person_id}'", f"effective_hours={effective_hours}"
             )
 
         db_adapter.commit()
