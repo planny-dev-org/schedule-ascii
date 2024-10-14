@@ -1,0 +1,2468 @@
+{
+  "version": 2,
+  "schedule": {
+    "num_of_days": 30,
+    "start_day": "2024-11-01",
+    "backup_coverage": true,
+    "grouping": false,
+    "hierarchization": false,
+    "hours_debt": false,
+    "preallocations": true,
+    "shift_occurrences": false,
+    "we_off_around_vacations": false,
+    "day_of_week_fairness": false,
+    "type_fairness": false,
+    "general_shift_fairness": false,
+    "bank_holidays": [
+      "2024-11-01"
+    ],
+    "night_fairness": true,
+    "no_consecutive_nights": false
+  },
+  "people": [
+    {
+      "id": "Broc-Lucas",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Tchoumbou-Ngomsi-Sidoine",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Kanta-Zoi",
+      "activity_rate": 50,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Van-Dorslaer-Heloise",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Mettraux-Laura",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Roche-Solen",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Piller-Sarah",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Donnet-Jess",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Estevinho-Tomas",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Eap-Khalyane",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Wurm-Juliane",
+      "activity_rate": 50,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Bonnaud-Marie",
+      "activity_rate": 50,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Vurlod-Juliette",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Fux-Evelyne",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Margot-Sophie",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Taverna-Alice",
+      "activity_rate": 50,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Bolay-Mayara",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    },
+    {
+      "id": "Hiroz-Justine",
+      "activity_rate": 100,
+      "standard_weektime_hours": 42.0,
+      "max_weektime_hours": 50.0,
+      "debt": 0,
+      "deactivate_full_weekend": false,
+      "deactivate_no_consecutive_weekends": false,
+      "work_time_lower_bound": null,
+      "work_time_upper_bound": null
+    }
+  ],
+  "shifts": [
+    {
+      "id": "Nf",
+      "display_name": "Nf",
+      "start_time": "22:30:00",
+      "end_time": "09:00:00",
+      "effective_duration": 42720,
+      "work_time": 37800,
+      "rest_time": 39600
+    },
+    {
+      "id": "D",
+      "display_name": "D",
+      "start_time": "08:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 30240,
+      "work_time": 30240,
+      "rest_time": 39600
+    },
+    {
+      "id": "C2",
+      "display_name": "C2",
+      "start_time": "08:00:00",
+      "end_time": "17:30:00",
+      "effective_duration": 33000,
+      "work_time": 32400,
+      "rest_time": 39600
+    },
+    {
+      "id": "R",
+      "display_name": "R",
+      "start_time": "08:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 0,
+      "work_time": 0,
+      "rest_time": 0
+    },
+    {
+      "id": "SfN",
+      "display_name": "SfN",
+      "start_time": "13:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 18000,
+      "work_time": 18000,
+      "rest_time": 39600
+    },
+    {
+      "id": "C",
+      "display_name": "C",
+      "start_time": "08:00:00",
+      "end_time": "17:30:00",
+      "effective_duration": 33000,
+      "work_time": 32400,
+      "rest_time": 39600
+    },
+    {
+      "id": "U1",
+      "display_name": "U1",
+      "start_time": "08:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 34800,
+      "work_time": 34200,
+      "rest_time": 39600
+    },
+    {
+      "id": "Nc",
+      "display_name": "Nc",
+      "start_time": "19:00:00",
+      "end_time": "05:00:00",
+      "effective_duration": 40380,
+      "work_time": 36000,
+      "rest_time": 39600
+    },
+    {
+      "id": "F",
+      "display_name": "F",
+      "start_time": "08:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 30240,
+      "work_time": 30240,
+      "rest_time": 39600
+    },
+    {
+      "id": "U3",
+      "display_name": "U3",
+      "start_time": "15:30:00",
+      "end_time": "01:00:00",
+      "effective_duration": 36420,
+      "work_time": 34200,
+      "rest_time": 43200
+    },
+    {
+      "id": "A1",
+      "display_name": "A1",
+      "start_time": "08:00:00",
+      "end_time": "17:30:00",
+      "effective_duration": 33000,
+      "work_time": 32400,
+      "rest_time": 39600
+    },
+    {
+      "id": "ABS",
+      "display_name": "ABS",
+      "start_time": "08:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 0,
+      "work_time": 0,
+      "rest_time": 0
+    },
+    {
+      "id": "A4",
+      "display_name": "A4",
+      "start_time": "08:00:00",
+      "end_time": "17:30:00",
+      "effective_duration": 33000,
+      "work_time": 32400,
+      "rest_time": 39600
+    },
+    {
+      "id": "E",
+      "display_name": "E",
+      "start_time": "08:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 34800,
+      "work_time": 34200,
+      "rest_time": 39600
+    },
+    {
+      "id": "PREF",
+      "display_name": "PREF",
+      "start_time": "08:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 0,
+      "work_time": 0,
+      "rest_time": 0
+    },
+    {
+      "id": "U2",
+      "display_name": "U2",
+      "start_time": "12:30:00",
+      "end_time": "22:30:00",
+      "effective_duration": 34800,
+      "work_time": 34200,
+      "rest_time": 39600
+    },
+    {
+      "id": "MAT",
+      "display_name": "MAT",
+      "start_time": "08:00:00",
+      "end_time": "18:00:00",
+      "effective_duration": 34800,
+      "work_time": 34200,
+      "rest_time": 39600
+    },
+    {
+      "id": "OFF",
+      "display_name": "OFF",
+      "start_time": "00:00:00",
+      "end_time": "00:00:00",
+      "effective_duration": 0,
+      "work_time": 0,
+      "rest_time": 0
+    },
+    {
+      "id": "HOL",
+      "display_name": "HOL",
+      "start_time": "00:00:00",
+      "end_time": "00:00:00",
+      "effective_duration": 0,
+      "work_time": 0,
+      "rest_time": 0
+    }
+  ],
+  "competences": [
+    {
+      "id": "A1",
+      "people": [
+        "Fux-Evelyne",
+        "Wurm-Juliane",
+        "Piller-Sarah",
+        "Bolay-Mayara"
+      ]
+    },
+    {
+      "id": "C",
+      "people": [
+        "Van-Dorslaer-Heloise",
+        "Wurm-Juliane",
+        "Piller-Sarah",
+        "Bolay-Mayara"
+      ]
+    },
+    {
+      "id": "A4",
+      "people": [
+        "Donnet-Jess",
+        "Wurm-Juliane",
+        "Piller-Sarah",
+        "Bolay-Mayara"
+      ]
+    },
+    {
+      "id": "Medecins_Assitant",
+      "people": [
+        "Bonnaud-Marie",
+        "Broc-Lucas",
+        "Eap-Khalyane",
+        "Estevinho-Tomas",
+        "Hiroz-Justine",
+        "Kanta-Zoi",
+        "Margot-Sophie",
+        "Mettraux-Laura",
+        "Roche-Solen",
+        "Taverna-Alice",
+        "Tchoumbou-Ngomsi-Sidoine",
+        "Vurlod-Juliette",
+        "Wurm-Juliane",
+        "Piller-Sarah",
+        "Bolay-Mayara"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "day": "2024-11-01",
+      "person": "Margot-Sophie",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-02",
+      "person": "Broc-Lucas",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-03",
+      "person": "Broc-Lucas",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Bonnaud-Marie",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Bonnaud-Marie",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Vurlod-Juliette",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Bonnaud-Marie",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Mettraux-Laura",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Mettraux-Laura",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Mettraux-Laura",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Taverna-Alice",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Bolay-Mayara",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Bolay-Mayara",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Roche-Solen",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Hiroz-Justine",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Hiroz-Justine",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Mettraux-Laura",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Taverna-Alice",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Margot-Sophie",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Margot-Sophie",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Margot-Sophie",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Kanta-Zoi",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Kanta-Zoi",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Eap-Khalyane",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Roche-Solen",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Wurm-Juliane",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Bolay-Mayara",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Hiroz-Justine",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Hiroz-Justine",
+      "shift": "U1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-01",
+      "person": "Kanta-Zoi",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-02",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-03",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Taverna-Alice",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Mettraux-Laura",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Mettraux-Laura",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Vurlod-Juliette",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Bonnaud-Marie",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Margot-Sophie",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Margot-Sophie",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Bonnaud-Marie",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Margot-Sophie",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Margot-Sophie",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Margot-Sophie",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Roche-Solen",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Estevinho-Tomas",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Estevinho-Tomas",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Hiroz-Justine",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Hiroz-Justine",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Roche-Solen",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Roche-Solen",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Roche-Solen",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Estevinho-Tomas",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Estevinho-Tomas",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Eap-Khalyane",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Roche-Solen",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Estevinho-Tomas",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Estevinho-Tomas",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Taverna-Alice",
+      "shift": "U2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Broc-Lucas",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Piller-Sarah",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Taverna-Alice",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Estevinho-Tomas",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Hiroz-Justine",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Vurlod-Juliette",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Vurlod-Juliette",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Margot-Sophie",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Wurm-Juliane",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Broc-Lucas",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Taverna-Alice",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Roche-Solen",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Mettraux-Laura",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Estevinho-Tomas",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Hiroz-Justine",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Roche-Solen",
+      "shift": "E",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Bolay-Mayara",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Bolay-Mayara",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "C",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-01",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Bolay-Mayara",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Bolay-Mayara",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Bolay-Mayara",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Bolay-Mayara",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Donnet-Jess",
+      "shift": "A4",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-01",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Piller-Sarah",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Piller-Sarah",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Piller-Sarah",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Piller-Sarah",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Fux-Evelyne",
+      "shift": "A1",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-01",
+      "person": "Eap-Khalyane",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-02",
+      "person": "Vurlod-Juliette",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-03",
+      "person": "Vurlod-Juliette",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Estevinho-Tomas",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Estevinho-Tomas",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Broc-Lucas",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Roche-Solen",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Roche-Solen",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Bolay-Mayara",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Bolay-Mayara",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Eap-Khalyane",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Eap-Khalyane",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Eap-Khalyane",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Bonnaud-Marie",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Bonnaud-Marie",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Roche-Solen",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Roche-Solen",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Roche-Solen",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Mettraux-Laura",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Mettraux-Laura",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Wurm-Juliane",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Piller-Sarah",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Margot-Sophie",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Margot-Sophie",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Vurlod-Juliette",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Eap-Khalyane",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Wurm-Juliane",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Broc-Lucas",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "U3",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Piller-Sarah",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Bonnaud-Marie",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Hiroz-Justine",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Bonnaud-Marie",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Estevinho-Tomas",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Bolay-Mayara",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Hiroz-Justine",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Kanta-Zoi",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Mettraux-Laura",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Wurm-Juliane",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "C2",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-01",
+      "person": "Estevinho-Tomas",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-02",
+      "person": "Margot-Sophie",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-03",
+      "person": "Margot-Sophie",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Bolay-Mayara",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Bolay-Mayara",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Wurm-Juliane",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Estevinho-Tomas",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Broc-Lucas",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Vurlod-Juliette",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Vurlod-Juliette",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Piller-Sarah",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Piller-Sarah",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Piller-Sarah",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Eap-Khalyane",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Eap-Khalyane",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Broc-Lucas",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Broc-Lucas",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Vurlod-Juliette",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Vurlod-Juliette",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Broc-Lucas",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Bolay-Mayara",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Bolay-Mayara",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Kanta-Zoi",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Piller-Sarah",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Piller-Sarah",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Mettraux-Laura",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Mettraux-Laura",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Vurlod-Juliette",
+      "shift": "Nf",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-01",
+      "person": "Piller-Sarah",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-02",
+      "person": "Eap-Khalyane",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-03",
+      "person": "Eap-Khalyane",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Eap-Khalyane",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-05",
+      "person": "Eap-Khalyane",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Estevinho-Tomas",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Broc-Lucas",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Vurlod-Juliette",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Roche-Solen",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Roche-Solen",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Broc-Lucas",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Broc-Lucas",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Wurm-Juliane",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Mettraux-Laura",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Mettraux-Laura",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Kanta-Zoi",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Estevinho-Tomas",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Estevinho-Tomas",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Broc-Lucas",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Hiroz-Justine",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Hiroz-Justine",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Hiroz-Justine",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Piller-Sarah",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Vurlod-Juliette",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Vurlod-Juliette",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Eap-Khalyane",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Eap-Khalyane",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Broc-Lucas",
+      "shift": "Nc",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Kanta-Zoi",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Kanta-Zoi",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Kanta-Zoi",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Taverna-Alice",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Taverna-Alice",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Estevinho-Tomas",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-12",
+      "person": "Taverna-Alice",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-13",
+      "person": "Taverna-Alice",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Hiroz-Justine",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Hiroz-Justine",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Hiroz-Justine",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Bolay-Mayara",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Margot-Sophie",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Margot-Sophie",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Margot-Sophie",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-11",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Eap-Khalyane",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Eap-Khalyane",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Eap-Khalyane",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Eap-Khalyane",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Eap-Khalyane",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Kanta-Zoi",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Kanta-Zoi",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Kanta-Zoi",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Kanta-Zoi",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Piller-Sarah",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Bonnaud-Marie",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Bonnaud-Marie",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Margot-Sophie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Margot-Sophie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Margot-Sophie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Margot-Sophie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Margot-Sophie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Piller-Sarah",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Piller-Sarah",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-01",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Donnet-Jess",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-16",
+      "person": "Bonnaud-Marie",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-17",
+      "person": "Bonnaud-Marie",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Kanta-Zoi",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Kanta-Zoi",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Piller-Sarah",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Piller-Sarah",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Eap-Khalyane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Hiroz-Justine",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Van-Dorslaer-Heloise",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Taverna-Alice",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Piller-Sarah",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Piller-Sarah",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-02",
+      "person": "Hiroz-Justine",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-03",
+      "person": "Hiroz-Justine",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Hiroz-Justine",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-23",
+      "person": "Mettraux-Laura",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-24",
+      "person": "Mettraux-Laura",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-25",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-26",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-27",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-28",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-29",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-09",
+      "person": "Hiroz-Justine",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-10",
+      "person": "Hiroz-Justine",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-04",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-15",
+      "person": "Wurm-Juliane",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Kanta-Zoi",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Kanta-Zoi",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Kanta-Zoi",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-14",
+      "person": "Taverna-Alice",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-30",
+      "person": "Bonnaud-Marie",
+      "shift": "OFF",
+      "type": "OFF"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Fux-Evelyne",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-19",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-20",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-21",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-22",
+      "person": "Bonnaud-Marie",
+      "shift": "HOL",
+      "type": "VACATION"
+    },
+    {
+      "day": "2024-11-18",
+      "person": "Wurm-Juliane",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-06",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-07",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "F",
+      "type": "SHIFT"
+    },
+    {
+      "day": "2024-11-08",
+      "person": "Tchoumbou-Ngomsi-Sidoine",
+      "shift": "F",
+      "type": "SHIFT"
+    }
+  ]
+}
