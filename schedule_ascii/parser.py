@@ -23,13 +23,21 @@ class JSONParser:
         person(name, activity_rate, night_shifts, weekend_shifts, target_hours, holiday_hours, work_hours, debt_hours)
         shift(name, display_name, duration, start_time, end_time)
         task(person, day, shift)
-        shift_labels(shift_id, label)
-        task_labels(task_id, label)
-
+        shift_label(shift_id, label)
+        task_label(task_id, label)
 
         Store json data to db tables
         :return:
         """
+
+        db_adapter.insert(
+            "schedule",
+            (
+                0,
+                self.json_data["schedule"]["start_day"],
+                self.json_data["schedule"]["num_of_days"],
+            ),
+        )
         schedule_start = datetime.date.fromisoformat(
             self.json_data["schedule"]["start_day"]
         )
@@ -62,7 +70,7 @@ class JSONParser:
                 ),
             )
             for label in shift_data.get("labels", []):
-                db_adapter.insert("shift_labels", (shift_data["id"], label))
+                db_adapter.insert("shift_label", (shift_data["id"], label))
 
         for i, task_data in enumerate(self.json_data["tasks"]):
             task_date = datetime.date.fromisoformat(task_data["day"])
@@ -78,6 +86,21 @@ class JSONParser:
             )
             if task_date.weekday() in [5, 6]:
                 db_adapter.insert(
-                    "task_labels",
+                    "task_label",
                     (i, "weekend"),
                 )
+
+        db_adapter.commit()
+
+        # store people nights
+        for person_id, night_count in db_adapter.select_person_nights():
+            db_adapter.update(
+                "person", f"id='{person_id}'", f"night_count={night_count}"
+            )
+
+        for person_id, weekend_count in db_adapter.select_person_weekends():
+            db_adapter.update(
+                "person", f"id='{person_id}'", f"weekend_count={weekend_count}"
+            )
+
+        db_adapter.commit()
