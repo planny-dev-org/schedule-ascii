@@ -4,7 +4,8 @@ import math
 def standard_deviation(values):
     """
     Return standard deviation given a list of values
-    :param values:
+
+    :param values: list of tuples [(delta, target), ...]
     :return:
     """
 
@@ -19,5 +20,48 @@ def standard_deviation(values):
     for value in values:
         deviation = value - average
         std_deviation_term += deviation**2
+    try:
+        return round(math.sqrt(std_deviation_term / values_size), 1)
+    except ZeroDivisionError:
+        return 0.0
 
-    return math.sqrt(std_deviation_term / values_size)
+
+def hours_score(values):
+    """
+    Compute a score from 0 to 100 for hours targets
+    formula: 100 - total sum of deviation divided by total sum of target, in percentage
+    maximum deviation factor is caped to 1
+
+    :param values: list of tuples [(delta, target), ...]
+    :return:
+    """
+    target_values = []
+    delta_values = []
+
+    for value in values:
+        delta_values.append(value[0])
+        target_values.append(value[1])
+    try:
+        return round(100 - (100 * min(sum(delta_values) / sum(target_values), 1)), 1)
+    except ZeroDivisionError:
+        return 0.0
+
+
+def fairness_score(values):
+    """
+    Compute a score of fairness from 0 to 100 for
+    formula: score = 100 - total sum of deviation divided by total sum of target, in percentage
+
+    :param values: list of tuples [(delta, target), ...]
+    :return:
+    """
+    if not values:
+        return 0
+
+    total_sum = sum(values)
+    mean = total_sum / len(values)
+    total_deviation = sum([abs(value - mean) for value in values])
+    try:
+        return round(100 - (100 * min(total_deviation / total_sum, 1)), 1)
+    except ZeroDivisionError:
+        return 0.0
