@@ -50,7 +50,7 @@ class JSONParser:
                     person_data["activity_rate"],
                     0,
                     0,
-                    0,
+                    person_data.get("work_target_minutes", 0) / 60,
                     0,
                     0,
                     0,
