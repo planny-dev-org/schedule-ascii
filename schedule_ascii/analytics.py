@@ -41,10 +41,16 @@ def hours_score(values):
     for value in values:
         delta_values.append(value[0])
         target_values.append(value[1])
+    total_delta = sum(delta_values)
+    total_target = sum(target_values)
     try:
-        return round(100 - (100 * min(sum(delta_values) / sum(target_values), 1)), 1)
+        return (
+            total_delta,
+            total_target,
+            round(100 - (100 * min(total_delta / total_target, 1)), 1),
+        )
     except ZeroDivisionError:
-        return 0.0
+        return total_delta, total_target, 0.0
 
 
 def fairness_score(values):
@@ -62,6 +68,8 @@ def fairness_score(values):
     mean = total_sum / len(values)
     total_deviation = sum([abs(value - mean) for value in values])
     try:
-        return round(100 - (100 * min(total_deviation / total_sum, 1)), 1)
+        return total_deviation, round(
+            100 - (100 * min(total_deviation / total_sum, 1)), 1
+        )
     except ZeroDivisionError:
-        return 0.0
+        return total_deviation, 0.0

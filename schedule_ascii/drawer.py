@@ -320,11 +320,35 @@ class Drawer:
         self.draw_indented_list(
             ["std dev (h)", raw_std, wo_extremes_std], first_width=15, width=10
         )
+        raw_hours_total_delta, raw_hours_total_target, raw_hours_score = hours_score(
+            raw_values
+        )
+        wo_hours_total_delta, wo_hours_total_target, wo_hours_score = hours_score(
+            wo_extremes_values
+        )
+        self.draw_indented_list(
+            [
+                "total dev (h)",
+                f"{int(raw_hours_total_delta)}",
+                f"{int(wo_hours_total_delta)}",
+            ],
+            first_width=15,
+            width=10,
+        )
+        self.draw_indented_list(
+            [
+                "total tgt (h)",
+                f"{int(raw_hours_total_target)}",
+                f"{int(wo_hours_total_target)}",
+            ],
+            first_width=15,
+            width=10,
+        )
         self.draw_indented_list(
             [
                 "score (%)",
-                f"{int(hours_score(raw_values))}%",
-                f"{int(hours_score(wo_extremes_values))}%",
+                f"{int(raw_hours_score)}%",
+                f"{int(wo_hours_score)}%",
             ],
             first_width=15,
             width=10,
@@ -365,11 +389,26 @@ class Drawer:
             self.draw_indented_list(
                 ["std dev", raw_std, wo_extremes_std], first_width=15, width=10
             )
+
+            raw_fairness_delta_total, raw_fairness_score = fairness_score(raw_values)
+            wo_fairness_delta_total, wo_fairness_score = fairness_score(
+                wo_extremes_values
+            )
+            self.draw_indented_list(
+                [
+                    "total dev",
+                    f"{int(raw_fairness_delta_total)}",
+                    f"{int(wo_fairness_delta_total)}",
+                ],
+                first_width=15,
+                width=10,
+            )
+
             self.draw_indented_list(
                 [
                     "score (%)",
-                    f"{int(fairness_score(raw_values))}%",
-                    f"{int(fairness_score(wo_extremes_values))}%",
+                    f"{int(raw_fairness_score)}%",
+                    f"{int(wo_fairness_score)}%",
                 ],
                 first_width=15,
                 width=10,
