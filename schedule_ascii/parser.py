@@ -84,7 +84,10 @@ class JSONParser:
                     task_date_int,
                 ),
             )
-            if task_date.weekday() in [5, 6]:
+            if task_date.weekday() in [5, 6] and task_data["shift"] not in [
+                "HOL",
+                "OFF",
+            ]:
                 db_adapter.insert(
                     "task_label",
                     (i, "weekend"),

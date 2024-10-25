@@ -239,7 +239,7 @@ class Drawer:
                     activity_rate,
                     round(target_hours, 1),
                     round(effective_hours, 1),
-                    round(target_hours - effective_hours, 1),
+                    round(effective_hours - target_hours, 1),
                     round(holiday_hours, 1),
                     round(debt_hours, 1),
                     night_count,

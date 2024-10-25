@@ -11,9 +11,7 @@ logging.basicConfig()
 def do_draw(json_file_path):
     json_parser = JSONParser(json_file_path)
     rel_path_name = os.path.basename(json_file_path)[:-5] + ".sqlite"
-    db_filename = os.path.join(
-        os.path.dirname(json_file_path), rel_path_name
-    )
+    db_filename = os.path.join(os.path.dirname(json_file_path), rel_path_name)
     db_adapter = DBAdapter(db_filename)
     db_adapter.init_tables()
 
