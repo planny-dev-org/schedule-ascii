@@ -4,10 +4,7 @@ from schedule_ascii.analytics import standard_deviation, hours_score, fairness_s
 SHIFT_DISPLAY_SEQ = "ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
 
 
-class Drawer:
-    """
-    ASCII printer
-    """
+class BaseDrawer:
 
     def __init__(self, db_adapter):
         self.block_width = 30
@@ -137,7 +134,7 @@ class Drawer:
             line += f"{label:<{block_width}}"
         print(f"{line}")
 
-    def draw_indented_list(self, labels, first_width=None, width=None):
+    def draw_indented_list(self, labels, first_width=None, width=None, replacement_list=None):
         """
         Same as draw_list but first position is fixed using self.block_width (larger block)
         Then, positions are fixed using self.day_width (smaller blocks)
@@ -151,12 +148,12 @@ class Drawer:
             line += f"{label:<{width}}"
         print(f"{line}")
 
-    def draw(self):
-        self.draw_sep(104)
+    def draw_schedule(self):
+        """
+        Draw schedule table
+        :return:
+        """
 
-        #############
-        # draw schedule
-        #############
         start_day, time_span_days = self.db_adapter.select(
             "schedule", ["start_day", "time_span_days"]
         )[0]
@@ -164,7 +161,11 @@ class Drawer:
         self.draw_list([start_day, time_span_days])
         self.draw_sep(104)
 
-        # draw shifts
+    def draw_shifts(self):
+        """
+        Draw shifts table
+        :return:
+        """
         self.draw_list(["shift id", "duration", "start_time", "end_time", "display"])
         for shift_data in self.db_adapter.select(
             "shift",
@@ -191,9 +192,11 @@ class Drawer:
             )
         self.draw_sep(104)
 
-        #############
-        # draw people
-        #############
+    def draw_people(self):
+        """
+        Draw people table
+        :return:
+        """
         self.draw_indented_list(
             [
                 "person id",
@@ -250,9 +253,48 @@ class Drawer:
             )
         self.draw_sep(120)
 
+
+class ScheduleDrawer(BaseDrawer):
+    """
+    Schedule ASCII printer
+    """
+
+    def __init__(self, db_adapter):
+        self.block_width = 30
+        self.day_width = 3
+        self.db_adapter = db_adapter
+
+    def draw(self):
+        self.draw_sep(104)
+
+        # draw schedule
+        self.draw_schedule()
+
+        # draw shifts
+        self.draw_shifts()
+
+        # draw people
+        self.draw_people()
+
         #############
         # draw tasks
         #############
+        people_data = self.db_adapter.select(
+            "person",
+            [
+                "id",
+                "activity_rate",
+                "night_count",
+                "weekend_count",
+                "target_hours",
+                "holiday_hours",
+                "effective_hours",
+                "debt_hours",
+            ],
+        )
+        start_day, time_span_days = self.db_adapter.select(
+            "schedule", ["start_day", "time_span_days"]
+        )[0]
         # days
         days = list(range(time_span_days))
         start_date = datetime.date.fromisoformat(start_day)
@@ -415,3 +457,78 @@ class Drawer:
             )
 
             self.draw_sep(120)
+
+
+class CapacityDrawer(BaseDrawer):
+    """
+    Draw schedule capacity.
+    For each shift for each day, draw 1 line with required minimal coverage and 1 line with count of available people
+    """
+
+    def draw(self):
+        start_day, time_span_days = self.db_adapter.select(
+            "schedule", ["start_day", "time_span_days"]
+        )[0]
+        # days
+        days = list(range(time_span_days))
+        start_date = datetime.date.fromisoformat(start_day)
+
+        # weekend line data
+        is_we = []
+        for day in days:
+            iso_day = start_date + datetime.timedelta(days=day)
+            if iso_day.weekday() in [5, 6]:
+                is_we.append("X")
+            else:
+                is_we.append("")
+
+        # header block
+        self.draw_indented_list([""] + days)
+        self.draw_indented_list([""] + is_we)
+        self.draw_sep(len(days) * self.day_width + self.block_width)
+
+        # capacities
+        for shift_data in self.db_adapter.select(
+                "shift",
+                [
+                    "id",
+                    "display_name",
+                    "ascii_display",
+                    "duration",
+                    "start_time",
+                    "end_time",
+                ],
+        ):
+            shift_id, display_name, ascii_display, duration, start_time, end_time = (
+                shift_data
+            )
+
+            needs_data = [f"{shift_id} needs"]
+            capacities_data = [f"{shift_id} capacity"]
+            for day in days:
+
+                # estimate minimal coverage needed for this shift for this day
+                needs_data.append(sum([value[0] for value in self.db_adapter.select("coverage", ["min_value"], f"shift_id='{shift_id}' AND day={day}")]))
+
+                # estimate count of available person to cover for this shift for this day
+                statement = f"""
+                SELECT person_id from coverage_person
+                INNER JOIN coverage on coverage_person.coverage_id=coverage.id
+                WHERE coverage.shift_id='{shift_id}'
+                AND day={day}
+                GROUP BY person_id
+                """
+                capacity = 0
+                for person_data in self.db_adapter.cur.execute(statement).fetchall():
+                    # check if person is available for this day
+                    person_id = person_data[0]
+                    ret = self.db_adapter.select("preallocation", ["id"], f"person_id='{person_id}' and day={day} and (type!=2 or shift_id!='{shift_id}')")
+                    if not ret:
+                        capacity += 1
+                capacities_data.append(capacity)
+
+            if sum(needs_data[1:]) or sum(capacities_data[1:]):
+                # ignore line if no data
+                self.draw_indented_list(needs_data)
+                self.draw_indented_list(capacities_data)
+                self.draw_sep(len(days) * self.day_width + self.block_width)
