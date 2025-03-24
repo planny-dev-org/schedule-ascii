@@ -108,11 +108,7 @@ class JSONParser:
             for person in coverage_data["people"]:
                 db_adapter.insert(
                     "coverage_person",
-                    (
-                        coverage_person_id,
-                        i,
-                        person
-                    ),
+                    (coverage_person_id, i, person),
                 )
                 coverage_person_id += 1
 
@@ -127,6 +123,17 @@ class JSONParser:
                     preallocation_data["day"],
                 ),
             )
+
+        exclusion_id = 0
+        for exclusion_data in self.json_data["day_exclusions"]:
+            for person_id in exclusion_data["people"]:
+                for shift_id in exclusion_data["shifts"]:
+                    for day in exclusion_data["days"]:
+                        db_adapter.insert(
+                            "exclusion",
+                            (exclusion_id, shift_id, person_id, day),
+                        )
+                        exclusion_id += 1
 
         db_adapter.commit()
 

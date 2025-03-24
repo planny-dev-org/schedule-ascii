@@ -48,6 +48,9 @@ class DBAdapter:
             "CREATE TABLE preallocation(id INTEGER PRIMARY KEY, shift_id, person_id, type, day, FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
         )
         self.cur.execute(
+            "CREATE TABLE exclusion(id INTEGER PRIMARY KEY, shift_id, person_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
+        )
+        self.cur.execute(
             """
             CREATE TABLE shift_label(shift_id VARCHAR,
               label,
@@ -70,6 +73,19 @@ class DBAdapter:
               FOREIGN KEY (coverage_id) REFERENCES coverage(id),
               FOREIGN KEY (person_id) REFERENCES person(id))
             """
+        )
+
+        # indexes
+        self.cur.execute(
+            "CREATE INDEX preallocation_idx ON preallocation(person_id, day)"
+        )
+        self.cur.execute("CREATE INDEX task_idx ON task(person_id, day)")
+        self.cur.execute("CREATE INDEX coverage_idx ON coverage(shift_id, day)")
+        self.cur.execute(
+            "CREATE INDEX exclusion_idx ON exclusion(person_id, day, shift_id)"
+        )
+        self.cur.execute(
+            "CREATE INDEX coverage_person_idx ON coverage_person(coverage_id, person_id)"
         )
 
     def select(self, table, columns, where_close=None):
@@ -143,7 +159,11 @@ class DBAdapter:
             COMMIT
             """
         LOG.debug(request)
-        self.cur.execute(request)
+        try:
+            self.cur.execute(request)
+        except sqlite3.OperationalError:
+            # avoid crash if no transaction is active
+            pass
 
     def rollback(self):
         request = f"""
