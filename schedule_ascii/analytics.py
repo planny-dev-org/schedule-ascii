@@ -62,7 +62,7 @@ def fairness_score(values):
     :return:
     """
     if not values:
-        return 0
+        return 0, 0.0
 
     total_sum = sum(values)
     mean = total_sum / len(values)

@@ -93,6 +93,48 @@ class JSONParser:
                     (i, "weekend"),
                 )
 
+        coverage_person_id = 0
+        for i, coverage_data in enumerate(self.json_data["coverages"]):
+            db_adapter.insert(
+                "coverage",
+                (
+                    i,
+                    coverage_data["min_value"],
+                    coverage_data["max_value"],
+                    coverage_data["shift"],
+                    coverage_data["day"],
+                ),
+            )
+            for person in coverage_data["people"]:
+                db_adapter.insert(
+                    "coverage_person",
+                    (coverage_person_id, i, person),
+                )
+                coverage_person_id += 1
+
+        for i, preallocation_data in enumerate(self.json_data["preallocations"]):
+            db_adapter.insert(
+                "preallocation",
+                (
+                    i,
+                    preallocation_data["shift"] if preallocation_data["shift"] else "",
+                    preallocation_data["person"],
+                    preallocation_data["type"],
+                    preallocation_data["day"],
+                ),
+            )
+
+        exclusion_id = 0
+        for exclusion_data in self.json_data["day_exclusions"]:
+            for person_id in exclusion_data["people"]:
+                for shift_id in exclusion_data["shifts"]:
+                    for day in exclusion_data["days"]:
+                        db_adapter.insert(
+                            "exclusion",
+                            (exclusion_id, shift_id, person_id, day),
+                        )
+                        exclusion_id += 1
+
         db_adapter.commit()
 
         # store people aggregated data

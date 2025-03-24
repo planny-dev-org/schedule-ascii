@@ -3,7 +3,7 @@ import argparse
 import logging
 from schedule_ascii.db import DBAdapter
 from schedule_ascii.parser import JSONParser
-from schedule_ascii.drawer import Drawer
+from schedule_ascii.drawer import ScheduleDrawer, CapacityDrawer
 
 logging.basicConfig()
 
@@ -17,12 +17,15 @@ def do_draw(json_file_path):
 
     json_parser.store(db_adapter)
 
-    drawer = Drawer(db_adapter)
-    drawer.init_shift_ascii_display()
+    capacity_drawer = CapacityDrawer(db_adapter)
+    capacity_drawer.draw()
+
+    schedule_drawer = ScheduleDrawer(db_adapter)
+    schedule_drawer.init_shift_ascii_display()
     for shift in db_adapter.select("shift", ["id", "ascii_display"]):
         print(f"{shift[0]} {shift[1]}")
 
-    drawer.draw()
+    schedule_drawer.draw()
 
 
 if __name__ == "__main__":
