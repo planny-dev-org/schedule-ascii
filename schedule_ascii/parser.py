@@ -117,9 +117,12 @@ class JSONParser:
                 "preallocation",
                 (
                     i,
-                    preallocation_data["shift"] if preallocation_data["shift"] else "",
+                    (
+                        preallocation_data["shift"]
+                        if preallocation_data["type"] == 2
+                        else "HOL" if preallocation_data["type"] == 1 else "OFF"
+                    ),
                     preallocation_data["person"],
-                    preallocation_data["type"],
                     preallocation_data["day"],
                 ),
             )

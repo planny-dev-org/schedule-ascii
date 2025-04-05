@@ -288,9 +288,9 @@ class ScheduleDrawer(BaseDrawer):
         # draw people
         self.draw_people()
 
-        #############
-        # draw tasks
-        #############
+        #############################
+        # draw preallocations & tasks
+        #############################
         people_data = self.db_adapter.select(
             "person",
             [
@@ -320,16 +320,25 @@ class ScheduleDrawer(BaseDrawer):
         self.draw_indented_list([""] + days)
         self.draw_indented_list([""] + is_we)
         self.draw_sep(len(days) * self.day_width + self.block_width)
-        # tasks
+
+        # tasks & preallocations
         for person_data in people_data:
             tasks = self.db_adapter.select_person_tasks(person_data[0])  # 0: person id
+            preals = self.db_adapter.select_person_preals(person_data[0])
             task_items = {}
+            preal_items = {}
             for display, day in tasks:
                 task_items[day] = display
-            labels = [person_data[0]]
+            for display, day in preals:
+                preal_items[day] = display
+            task_labels = [person_data[0]]
+            preal_labels = [f"{person_data[0]}[P]"]
             for day in days:
-                labels.append(task_items.get(day, " "))
-            self.draw_indented_list(labels)
+                task_labels.append(task_items.get(day, " "))
+                preal_labels.append(preal_items.get(day, " "))
+            self.draw_indented_list(task_labels)
+            self.draw_indented_list(preal_labels)
+            self.draw_sep(len(days) * self.day_width + self.block_width)
         self.draw_sep(120)
 
         #############
@@ -526,6 +535,7 @@ class CapacityDrawer(BaseDrawer):
         # needs & capacities
         total_needs_data = [0] * len(days)
         total_capacity_people = [[]] * len(days)
+        total_coverage_data = [0] * len(days)
 
         for shift_data in self.db_adapter.select(
             "shift",
@@ -544,6 +554,7 @@ class CapacityDrawer(BaseDrawer):
 
             needs_data = [f"{shift_id} needs"]
             capacities_data = [f"{shift_id} capacity"]
+            coverage_data = [f"{shift_id} coverage"]
 
             for i, day in enumerate(days):
                 # estimate minimal coverage needed for this shift for this day
@@ -562,7 +573,7 @@ class CapacityDrawer(BaseDrawer):
 
                 # estimate count of available person to cover for this shift for this day
                 statement = f"""
-                SELECT person_id from coverage_person
+                SELECT person_id FROM coverage_person
                 INNER JOIN coverage on coverage_person.coverage_id=coverage.id
                 WHERE coverage.shift_id='{shift_id}'
                 AND day={day}
@@ -577,14 +588,14 @@ class CapacityDrawer(BaseDrawer):
                     is_preallocated = self.db_adapter.select(
                         "preallocation",
                         ["id"],
-                        f"person_id='{person_id}' and day={day} and (type!=2 or shift_id!='{shift_id}')",
+                        f"person_id='{person_id}' AND day={day} and (id NOT IN ('OFF', 'HOL') OR shift_id!='{shift_id}')",
                     )
 
                     # ignore person if excluded for this day and shift
                     is_excluded = self.db_adapter.select(
                         "exclusion",
                         ["id"],
-                        f"person_id='{person_id}' and day={day} and shift_id='{shift_id}'",
+                        f"person_id='{person_id}' AND day={day} AND shift_id='{shift_id}'",
                     )
 
                     if not is_preallocated and not is_excluded:
@@ -594,11 +605,26 @@ class CapacityDrawer(BaseDrawer):
 
                 capacities_data.append(capacity)
 
-            if sum(needs_data[1:]) or sum(capacities_data[1:]):
+                # count coverage for this shift
+                statement = f"""
+                SELECT count('id') FROM task
+                WHERE day={day} 
+                AND shift_id='{shift_id}'
+                """
+                coverage_count = self.db_adapter.cur.execute(statement).fetchall()[0][0]
+                coverage_data.append(coverage_count)
+                total_coverage_data[i] += coverage_count
+
+            if (
+                sum(needs_data[1:])
+                or sum(capacities_data[1:])
+                or sum(coverage_data[1:])
+            ):
                 # ignore line if no data
                 #                self.colorize(needs_data, capacities_data)  # TODO: find a solution that don't break indentation
                 self.draw_indented_list(needs_data)
                 self.draw_indented_list(capacities_data)
+                self.draw_indented_list(coverage_data)
                 self.draw_sep(len(days) * self.day_width + self.block_width)
 
         # draw totals
@@ -608,4 +634,5 @@ class CapacityDrawer(BaseDrawer):
             ["total capacity"]
             + [len(people_capacity) for people_capacity in total_capacity_people]
         )
+        self.draw_indented_list(["total coverage"] + total_coverage_data)
         self.draw_sep(len(days) * self.day_width + self.block_width)

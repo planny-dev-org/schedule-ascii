@@ -45,7 +45,9 @@ class DBAdapter:
             "CREATE TABLE coverage(id INTEGER PRIMARY KEY, min_value, max_value, shift_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id))"
         )
         self.cur.execute(
-            "CREATE TABLE preallocation(id INTEGER PRIMARY KEY, shift_id, person_id, type, day, FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
+            """
+            CREATE TABLE preallocation(id INTEGER PRIMARY KEY, shift_id, person_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))
+            """
         )
         self.cur.execute(
             "CREATE TABLE exclusion(id INTEGER PRIMARY KEY, shift_id, person_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
@@ -131,11 +133,20 @@ class DBAdapter:
 
     def select_person_tasks(self, person_id):
         """
-        Count number of weekends for each person
+        Select person tasks
         """
-
         request = f"""
             SELECT ascii_display, day FROM task INNER JOIN shift ON shift.id=task.shift_id where person_id='{person_id}'
+        """
+        LOG.debug(request)
+        return self.cur.execute(request).fetchall()
+
+    def select_person_preals(self, person_id):
+        """
+        Select person preallocations
+        """
+        request = f"""
+            SELECT ascii_display, day FROM preallocation INNER JOIN shift ON shift.id=preallocation.shift_id where person_id='{person_id}'
         """
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
