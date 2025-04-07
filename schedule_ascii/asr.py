@@ -22,8 +22,6 @@ def do_draw(json_file_path):
 
     schedule_drawer = ScheduleDrawer(db_adapter)
     schedule_drawer.init_shift_ascii_display()
-    for shift in db_adapter.select("shift", ["id", "ascii_display"]):
-        print(f"{shift[0]} {shift[1]}")
 
     schedule_drawer.draw()
 

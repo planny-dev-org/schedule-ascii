@@ -171,14 +171,17 @@ class BaseDrawer:
         )[0]
         self.draw_list(["start day", "num of days"])
         self.draw_list([start_day, time_span_days])
-        self.draw_sep(104)
+        self.draw_sep(155)
 
     def draw_shifts(self):
         """
         Draw shifts table
         :return:
         """
-        self.draw_list(["shift id", "duration", "start_time", "end_time", "display"])
+        self.draw_list(
+            ["shift id", "duration", "start_time", "end_time", "display", "count"]
+        )
+        total_count = 0
         for shift_data in self.db_adapter.select(
             "shift",
             [
@@ -193,6 +196,9 @@ class BaseDrawer:
             shift_id, display_name, ascii_display, duration, start_time, end_time = (
                 shift_data
             )
+            task_count = len(
+                self.db_adapter.select("task", ["id"], f"shift_id='{shift_id}'")
+            )
             self.draw_list(
                 [
                     shift_id,
@@ -200,9 +206,12 @@ class BaseDrawer:
                     start_time,
                     end_time,
                     ascii_display,
+                    task_count,
                 ]
             )
-        self.draw_sep(104)
+            total_count += task_count
+        self.draw_list(["total", "", "", "", "", total_count])
+        self.draw_sep(155)
 
     def draw_people(self):
         """
@@ -237,6 +246,12 @@ class BaseDrawer:
                 "debt_hours",
             ],
         )
+        total_night = 0
+        total_weekend = 0
+        total_target = 0
+        total_holiday = 0
+        total_effective = 0
+        total_debt = 0
         for person_data in people_data:
             (
                 person_id,
@@ -248,6 +263,12 @@ class BaseDrawer:
                 effective_hours,
                 debt_hours,
             ) = person_data
+            total_night += night_count
+            total_weekend += weekend_count
+            total_target += target_hours
+            total_holiday += holiday_hours
+            total_effective += effective_hours
+            total_debt += debt_hours
             self.draw_indented_list(
                 [
                     person_id,
@@ -263,7 +284,22 @@ class BaseDrawer:
                 first_width=30,
                 width=15,
             )
-        self.draw_sep(120)
+        self.draw_indented_list(
+            [
+                "total",
+                "",
+                round(total_target, 1),
+                round(total_effective, 1),
+                round(total_effective - total_target, 1),
+                round(total_holiday, 1),
+                round(total_debt, 1),
+                total_night,
+                total_weekend,
+            ],
+            first_width=30,
+            width=15,
+        )
+        self.draw_sep(137)
 
 
 class ScheduleDrawer(BaseDrawer):
@@ -275,6 +311,7 @@ class ScheduleDrawer(BaseDrawer):
         self.block_width = 30
         self.day_width = 3
         self.db_adapter = db_adapter
+        super().__init__(db_adapter)
 
     def draw(self):
         self.draw_sep(104)
