@@ -533,9 +533,10 @@ class CapacityDrawer(BaseDrawer):
         self.draw_sep(len(days) * self.day_width + self.block_width)
 
         # needs & capacities
-        total_needs_data = [0] * len(days)
         total_capacity_people = [[]] * len(days)
-        total_coverage_data = [0] * len(days)
+        total_covered = [0] * len(days)
+        total_min_coverage = [0] * len(days)
+        total_max_coverage = [0] * len(days)
 
         for shift_data in self.db_adapter.select(
             "shift",
@@ -552,24 +553,26 @@ class CapacityDrawer(BaseDrawer):
                 shift_data
             )
 
-            needs_data = [f"{shift_id} needs"]
             capacities_data = [f"{shift_id} capacity"]
-            coverage_data = [f"{shift_id} coverage"]
+            min_coverage_data = [f"{shift_id} min coverage"]
+            covered_data = [f"{shift_id} covered"]
+            max_coverage_data = [f"{shift_id} max coverage"]
 
             for i, day in enumerate(days):
                 # estimate minimal coverage needed for this shift for this day
-                needs_count = sum(
-                    [
-                        value[0]
-                        for value in self.db_adapter.select(
-                            "coverage",
-                            ["min_value"],
-                            f"shift_id='{shift_id}' AND day={day}",
-                        )
-                    ]
-                )
-                needs_data.append(needs_count)
-                total_needs_data[i] += needs_count
+                min_coverage_count = 0
+                max_coverage_count = 0
+                for min_value, max_value in self.db_adapter.select(
+                    "coverage",
+                    ["min_value", "max_value"],
+                    f"shift_id='{shift_id}' AND day={day}",
+                ):
+                    min_coverage_count += min_value
+                    max_coverage_count += max_value
+                min_coverage_data.append(min_coverage_count)
+                max_coverage_data.append(max_coverage_count)
+                total_min_coverage[i] += min_coverage_count
+                total_max_coverage[i] += max_coverage_count
 
                 # estimate count of available person to cover for this shift for this day
                 statement = f"""
@@ -611,28 +614,35 @@ class CapacityDrawer(BaseDrawer):
                 WHERE day={day} 
                 AND shift_id='{shift_id}'
                 """
-                coverage_count = self.db_adapter.cur.execute(statement).fetchall()[0][0]
-                coverage_data.append(coverage_count)
-                total_coverage_data[i] += coverage_count
+                try:
+                    coverage_count = self.db_adapter.cur.execute(statement).fetchall()[
+                        0
+                    ][0]
+                except IndexError:
+                    coverage_count = 0
+                covered_data.append(coverage_count)
+                total_covered[i] += coverage_count
 
             if (
-                sum(needs_data[1:])
+                sum(min_coverage_data[1:])
                 or sum(capacities_data[1:])
-                or sum(coverage_data[1:])
+                or sum(covered_data[1:])
             ):
                 # ignore line if no data
-                #                self.colorize(needs_data, capacities_data)  # TODO: find a solution that don't break indentation
-                self.draw_indented_list(needs_data)
+                #                self.colorize(min_coverage_data, capacities_data)  # TODO: find a solution that don't break indentation
                 self.draw_indented_list(capacities_data)
-                self.draw_indented_list(coverage_data)
+                self.draw_indented_list(min_coverage_data)
+                self.draw_indented_list(covered_data)
+                self.draw_indented_list(max_coverage_data)
                 self.draw_sep(len(days) * self.day_width + self.block_width)
 
         # draw totals
         #        self.colorize(total_needs_data, total_capacity_people)
-        self.draw_indented_list(["total needs"] + total_needs_data)
         self.draw_indented_list(
             ["total capacity"]
             + [len(people_capacity) for people_capacity in total_capacity_people]
         )
-        self.draw_indented_list(["total coverage"] + total_coverage_data)
+        self.draw_indented_list(["total min coverage"] + total_min_coverage)
+        self.draw_indented_list(["total covered"] + total_covered)
+        self.draw_indented_list(["total max coverage"] + total_max_coverage)
         self.draw_sep(len(days) * self.day_width + self.block_width)
