@@ -76,6 +76,17 @@ class DBAdapter:
               FOREIGN KEY (person_id) REFERENCES person(id))
             """
         )
+        self.cur.execute(
+            """
+            CREATE TABLE sequence(id INTEGER PRIMARY KEY,
+              shift_id,
+              group,
+              order,
+              weekday,
+              FOREIGN KEY (shift_id) REFERENCES shift(id),
+              FOREIGN KEY (person_id) REFERENCES person(id))
+            """
+        )
 
         # indexes
         self.cur.execute(
@@ -90,13 +101,16 @@ class DBAdapter:
             "CREATE INDEX coverage_person_idx ON coverage_person(coverage_id, person_id)"
         )
 
-    def select(self, table, columns, where_close=None):
+    def select(self, table, columns, where_close=None, order_by_close=None):
         request = f"""
             SELECT {','.join(columns)} FROM {table}
         """
         LOG.debug(f"{request} WHERE {where_close}")
         if where_close:
             request = f"{request} WHERE {where_close}"
+
+        if order_by_close:
+            request = f"{request} ORDER BY {order_by_close}"
 
         return self.cur.execute(request).fetchall()
 
@@ -131,6 +145,16 @@ class DBAdapter:
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 
+    def select_total_effective_hours(self):
+        """
+        Sum of all effective hours in the schedule
+        """
+        request = f"""
+            SELECT sum(duration) FROM task INNER JOIN shift ON shift.id=task.shift_id
+        """
+        LOG.debug(request)
+        return self.cur.execute(request).fetchall()[0]
+
     def select_person_tasks(self, person_id):
         """
         Select person tasks
@@ -138,6 +162,21 @@ class DBAdapter:
         request = f"""
             SELECT ascii_display, day FROM task INNER JOIN shift ON shift.id=task.shift_id where person_id='{person_id}'
         """
+        LOG.debug(request)
+        return self.cur.execute(request).fetchall()
+
+    def select_shift_tasks(self, shift_id, days=None, person=""):
+        """
+        Select shift tasks
+        """
+        request = f"""
+            SELECT task.id FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE shift_id='{shift_id}'
+        """
+        if days:
+            request += f"AND days IN ({','.join(days)})"
+        if person:
+            request += f"AND person_id='{person}'"
+
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 
