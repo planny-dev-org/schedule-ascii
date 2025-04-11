@@ -39,7 +39,7 @@ class DBAdapter:
             "CREATE TABLE shift(id VARCHAR PRIMARY KEY, display_name, ascii_display, duration, start_time, end_time)"
         )
         self.cur.execute(
-            "CREATE TABLE task(id INTEGER PRIMARY KEY, person_id, shift_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
+            "CREATE TABLE task(id INTEGER PRIMARY KEY, person_id, shift_id, day FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
         )
         self.cur.execute(
             "CREATE TABLE coverage(id INTEGER PRIMARY KEY, min_value, max_value, shift_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id))"
@@ -130,7 +130,7 @@ class DBAdapter:
         Count number of weekends for each person
         """
         request = f"""
-            SELECT person_id, count(*) FROM task INNER JOIN task_label ON task_label.task_id=task.id where label='weekend' GROUP BY person_id
+            SELECT person_id, count(*) FROM task INNER JOIN task_label ON task_label.task_id=task.id WHERE label='weekend' GROUP BY person_id
         """
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
@@ -155,13 +155,16 @@ class DBAdapter:
         LOG.debug(request)
         return self.cur.execute(request).fetchall()[0]
 
-    def select_person_tasks(self, person_id):
+    def select_person_tasks(self, person_id, days=None):
         """
         Select person tasks
         """
         request = f"""
-            SELECT ascii_display, day FROM task INNER JOIN shift ON shift.id=task.shift_id where person_id='{person_id}'
+            SELECT ascii_display, day, duration, start_time, end_time FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE person_id='{person_id}'
         """
+        if days:
+            request = f"{request} WHERE day IN {','.join(days)}"
+
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 
@@ -180,13 +183,29 @@ class DBAdapter:
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 
-    def select_person_preals(self, person_id):
+    def select_person_preals(self, person_id, days=None):
         """
         Select person preallocations
         """
         request = f"""
-            SELECT ascii_display, day FROM preallocation INNER JOIN shift ON shift.id=preallocation.shift_id where person_id='{person_id}'
+            SELECT ascii_display, day FROM preallocation INNER JOIN shift ON shift.id=preallocation.shift_id WHERE person_id='{person_id}'
         """
+        if days:
+            request = f"{request} AND day IN {','.join(days)}"
+        LOG.debug(request)
+        return self.cur.execute(request).fetchall()
+
+    def select_person_exclusions(self, person_id, shift_id="", days=None):
+        """
+        Select person exclusions
+        """
+        request = f"""
+            SELECT shift_id, day FROM exclusion WHERE person_id='{person_id}'
+        """
+        if shift_id:
+            request = f"{request} AND shift_id={shift_id}"
+        if days:
+            request = f"{request} AND day IN ({','.join(days)})"
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 

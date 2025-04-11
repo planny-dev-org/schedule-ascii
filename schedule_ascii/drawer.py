@@ -1,5 +1,15 @@
 import datetime
-from schedule_ascii.analytics import standard_deviation, hours_score, fairness_score
+from schedule_ascii.analytics import (
+    standard_deviation,
+    hours_score,
+    fairness_score,
+    HoursDeviation,
+    ExtraHours,
+    ShiftFairness,
+    Sequences,
+    WeekWorktime,
+    WorkerPreference,
+)
 
 SHIFT_DISPLAY_SEQ = "ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
 
@@ -18,10 +28,11 @@ class BColors:
 
 class BaseDrawer:
 
-    def __init__(self, db_adapter):
+    def __init__(self, db_adapter, model_config_data=None):
         self.block_width = 30
         self.day_width = 3
         self.db_adapter = db_adapter
+        self.model_config_data = model_config_data
 
     def init_shift_ascii_display(self):
         """
@@ -364,7 +375,7 @@ class ScheduleDrawer(BaseDrawer):
             preals = self.db_adapter.select_person_preals(person_data[0])
             task_items = {}
             preal_items = {}
-            for display, day in tasks:
+            for display, day, _, _, _ in tasks:
                 task_items[day] = display
             for display, day in preals:
                 preal_items[day] = display
@@ -683,3 +694,63 @@ class CapacityDrawer(BaseDrawer):
         self.draw_indented_list(["total covered"] + total_covered)
         self.draw_indented_list(["total max coverage"] + total_max_coverage)
         self.draw_sep(len(days) * self.day_width + self.block_width)
+
+
+class FlawDrawer(BaseDrawer):
+    """
+    Draw a table of flaws based on analytics classes:
+        HoursDeviation,
+        ExtraHours,
+        ShiftFairness,
+        Sequences,
+        WeekWorktime,
+        WorkerPreference,
+    """
+
+    def draw(self):
+
+        analytics_instances = {}
+
+        # hours
+        for hour_objective in self.model_config_data.get("hour_deviation_obj", []):
+            for i, people_group in enumerate(hour_objective.get("people_groups", [])):
+                hour_deviation = HoursDeviation(
+                    self.db_adapter, people=hour_objective.people
+                )
+                hour_deviation.compute()
+                analytics_instances[f"Hour deviation, group {i}"] = hour_deviation
+
+        # extra hours
+        extra_hours = ExtraHours(self.db_adapter)
+        extra_hours.compute()
+        analytics_instances["Extra hours"] = extra_hours
+
+        # fairness
+        for fairness_objective in self.model_config_data.get("shift_fairness_obj"):
+            shift_id = fairness_objective["shift_id"]
+            # TODO: use a person group when available in scheduler
+            shift_fairness = ShiftFairness(
+                self.db_adapter,
+                shift=shift_id,
+                people=self.db_adapter.select("person", ["id"]),
+            )
+            shift_fairness.compute()
+            analytics_instances[f"Shift fairness ({shift_id})"] = shift_fairness
+
+        # sequences
+        sequence = Sequences(self.db_adapter)
+        sequence.compute()
+        analytics_instances[f"Sequences"] = sequence
+
+        # week worktime
+        week_worktime = WeekWorktime(self.db_adapter)
+        week_worktime.compute()
+        analytics_instances[f"Week worktime"] = sequence
+
+        # preferences
+        # TODO: see if preference should move to config or if a ShiftGrouping table should be added
+        """
+        preference = WorkerPreference(self.db_adapter)
+        preference.compute()
+        analytics_instances[f"Preference"] = preference
+        """
