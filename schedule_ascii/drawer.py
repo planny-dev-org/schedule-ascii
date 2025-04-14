@@ -501,7 +501,7 @@ class CapacityDrawer(BaseDrawer):
                     is_preallocated = self.db_adapter.select(
                         "preallocation",
                         ["id"],
-                        f"person_id='{person_id}' AND day={day} and (id NOT IN ('OFF', 'HOL') OR shift_id!='{shift_id}')",
+                        f"person_id='{person_id}' AND day={day} AND (shift_id!='{shift_id}')",
                     )
 
                     # ignore person if excluded for this day and shift
