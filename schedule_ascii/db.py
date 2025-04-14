@@ -39,7 +39,7 @@ class DBAdapter:
             "CREATE TABLE shift(id VARCHAR PRIMARY KEY, display_name, ascii_display, duration, start_time, end_time)"
         )
         self.cur.execute(
-            "CREATE TABLE task(id INTEGER PRIMARY KEY, person_id, shift_id, day FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
+            "CREATE TABLE task(id INTEGER PRIMARY KEY, person_id, shift_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
         )
         self.cur.execute(
             "CREATE TABLE coverage(id INTEGER PRIMARY KEY, min_value, max_value, shift_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id))"
@@ -76,15 +76,15 @@ class DBAdapter:
               FOREIGN KEY (person_id) REFERENCES person(id))
             """
         )
+        # Airtable people are skipped, it's an objective in new schedule version
         self.cur.execute(
             """
             CREATE TABLE sequence(id INTEGER PRIMARY KEY,
               shift_id,
-              group,
-              order,
+              seq_group,
+              seq_order,
               weekday,
-              FOREIGN KEY (shift_id) REFERENCES shift(id),
-              FOREIGN KEY (person_id) REFERENCES person(id))
+              FOREIGN KEY (shift_id) REFERENCES shift(id))
             """
         )
 
@@ -101,16 +101,21 @@ class DBAdapter:
             "CREATE INDEX coverage_person_idx ON coverage_person(coverage_id, person_id)"
         )
 
-    def select(self, table, columns, where_close=None, order_by_close=None):
+    def select(
+        self, table, columns, where_close=None, order_by_close=None, group_by_close=None
+    ):
         request = f"""
             SELECT {','.join(columns)} FROM {table}
         """
-        LOG.debug(f"{request} WHERE {where_close}")
         if where_close:
             request = f"{request} WHERE {where_close}"
 
+        if group_by_close:
+            request = f"{request} GROUP BY {group_by_close}"
+
         if order_by_close:
             request = f"{request} ORDER BY {order_by_close}"
+        LOG.debug(f"{request}")
 
         return self.cur.execute(request).fetchall()
 
@@ -153,7 +158,7 @@ class DBAdapter:
             SELECT sum(duration) FROM task INNER JOIN shift ON shift.id=task.shift_id
         """
         LOG.debug(request)
-        return self.cur.execute(request).fetchall()[0]
+        return self.cur.execute(request).fetchall()[0][0]
 
     def select_person_tasks(self, person_id, days=None):
         """
@@ -163,7 +168,7 @@ class DBAdapter:
             SELECT ascii_display, day, duration, start_time, end_time FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE person_id='{person_id}'
         """
         if days:
-            request = f"{request} WHERE day IN {','.join(days)}"
+            request = f"{request} AND day IN ({','.join([str(day) for day in days])})"
 
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
@@ -173,10 +178,10 @@ class DBAdapter:
         Select shift tasks
         """
         request = f"""
-            SELECT task.id FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE shift_id='{shift_id}'
+            SELECT task.id, task.person_id FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE shift_id='{shift_id}'
         """
         if days:
-            request += f"AND days IN ({','.join(days)})"
+            request += f"AND day IN ({','.join([str(day) for day in days])})"
         if person:
             request += f"AND person_id='{person}'"
 
@@ -191,7 +196,7 @@ class DBAdapter:
             SELECT ascii_display, day FROM preallocation INNER JOIN shift ON shift.id=preallocation.shift_id WHERE person_id='{person_id}'
         """
         if days:
-            request = f"{request} AND day IN {','.join(days)}"
+            request = f"{request} AND day IN ({','.join(days)})"
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 

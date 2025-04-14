@@ -29,6 +29,7 @@ def do_draw(output_file_path, config_file_path):
 
     # analytics
     flaw_drawer = FlawDrawer(db_adapter, json.load(open(config_file_path)))
+    flaw_drawer.draw()
 
 
 if __name__ == "__main__":

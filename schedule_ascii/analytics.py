@@ -109,12 +109,14 @@ class ScheduleAnalytics(DBAnalytics):
     weekend_days: List[int] = dataclasses.field(default_factory=list)
 
     def compute(self):
-        self.time_span = self.db_adapter.select("schedule", ["time_span_days"])[0]
+        self.time_span = self.db_adapter.select("schedule", ["time_span_days"])[0][0]
 
         for min_value, max_value, shift_id in self.db_adapter.select(
             "coverage", ["min_value", "max_value", "shift_id"]
         ):
-            shift_duration = self.db_adapter.select("shift", [""]).fetchall()[0]
+            shift_duration = self.db_adapter.select(
+                "shift", ["duration"], f"id='{shift_id}'"
+            )[0][0]
             self.min_coverage_work_hours += min_value * shift_duration / 3600
             self.max_coverage_work_hours += max_value * shift_duration / 3600
 
@@ -123,15 +125,15 @@ class ScheduleAnalytics(DBAnalytics):
             for day in range(self.time_span):
                 if not len(
                     self.db_adapter.cur.execute(
-                        f"SELECT id FROM preallocation WHERE day={day} AND person_id={person_id} AND shift_id in ['OFF', 'HOL']"
-                    )
-                ).fetchall():
+                        f"SELECT id FROM preallocation WHERE day={day} AND person_id='{person_id}' AND shift_id in ('OFF', 'HOL')"
+                    ).fetchall()
+                ):
                     self.available_work_hours += 8
 
         self.total_work_hours = self.db_adapter.select_total_effective_hours()
 
         iso_day = datetime.date.fromisoformat(
-            self.db_adapter.select("schedule", ["start_day"])[0]
+            self.db_adapter.select("schedule", ["start_day"])[0][0]
         )
         if iso_day.weekday() in [5, 6]:
             self.weekend_days.append(0)
@@ -147,9 +149,10 @@ class ScheduleAnalytics(DBAnalytics):
         :return: List of day integers
         """
         days_int = []
-        start_day_iso, time_span = datetime.date.fromisoformat(
-            self.db_adapter.select("schedule", ["start_day", "time_span_days"])[0]
-        )
+        start_day_str, time_span = self.db_adapter.select(
+            "schedule", ["start_day", "time_span_days"]
+        )[0]
+        start_day_iso = datetime.date.fromisoformat(start_day_str)
         for day_int in range(time_span):
             iso_day = start_day_iso + datetime.timedelta(days=day_int)
             if iso_day.weekday() == weekday:
@@ -187,8 +190,11 @@ class HoursDeviation(FlawsAnalytic):
     def compute(self):
         deviations = []
         max_deviations = []
-        for target, effective in self.db_adapter.select(
-            "person", ["effective_hours", "target_hours"]
+        people_str = [f"'{person}'" for person in self.people]
+        for effective, target in self.db_adapter.select(
+            "person",
+            ["effective_hours", "target_hours"],
+            f"id IN ({','.join(people_str)})",
         ):
             deviations.append(target - effective)
             max_deviations.append(target)
@@ -197,7 +203,7 @@ class HoursDeviation(FlawsAnalytic):
         self.flaws_max = round(standard_deviation(max_deviations), 0)
 
         if self.flaws_max:
-            self.score = round(100 - (100 * (1 - self.flaws / self.flaws_max)), 0)
+            self.score = round(100 - (100 * (self.flaws / self.flaws_max)), 0)
 
 
 @dataclasses.dataclass
@@ -210,7 +216,7 @@ class ExtraHours(FlawsAnalytic):
         schedule_analytics = ScheduleAnalytics(self.db_adapter)
         schedule_analytics.compute()
 
-        self.flaws_min = min(
+        self.flaws_min = max(
             0,
             round(
                 schedule_analytics.min_coverage_work_hours
@@ -227,7 +233,7 @@ class ExtraHours(FlawsAnalytic):
         )
 
         if self.flaws_max:
-            self.score = round(100 - (100 * (1 - self.flaws / self.flaws_max)), 0)
+            self.score = round(100 - (100 * (self.flaws / self.flaws_max)), 0)
 
 
 @dataclasses.dataclass
@@ -260,14 +266,16 @@ class ShiftFairness(FlawsAnalytic):
         self.flaws_max = shift_count - high_average
 
         for person in self.people:
-            task_count = self.db_adapter.select_shift_tasks(self.shift, person=person)
-            if task_count >= high_average:
-                self.flaws += task_count - high_average
-            else:
-                self.flaws += low_average - task_count
+            shift_tasks = self.db_adapter.select_shift_tasks(self.shift, person=person)
+            if shift_tasks:
+                task_count = len(shift_tasks)
+                if task_count >= high_average:
+                    self.flaws += task_count - high_average
+                else:
+                    self.flaws += low_average - task_count
 
         if self.flaws_max:
-            self.score = round(100 - (100 * (1 - self.flaws / self.flaws_max)), 0)
+            self.score = round(100 - (100 * (self.flaws / self.flaws_max)), 0)
 
 
 @dataclasses.dataclass
@@ -280,26 +288,69 @@ class Sequences(FlawsAnalytic):
         schedule_analytics = ScheduleAnalytics(self.db_adapter)
 
         sequences = self.db_adapter.select(
-            "sequence", ["id", "shift", "group", "order", "weekday"]
+            "sequence", ["id", "shift_id", "seq_group", "seq_order", "weekday"]
         )
-
-        groups = set([sequence[1] for sequence in sequences])
+        groups = set([sequence[2] for sequence in sequences])
         for group in groups:
             sequences = self.db_adapter.select(
                 "sequence",
-                ["id", "shift", "group", "order", "weekday"],
-                f"group={group}",
-                "order",
+                ["id", "shift_id", "seq_group", "seq_order", "weekday"],
+                f"seq_group={group}",
+                "seq_order",
             )
-            for sequence in sequences:
-                sequence_id, shift, group, order, weekday = sequence
-                days_int = schedule_analytics.days_int(sequence.day)
-                self.flaws_max += len(days_int)
-                match_days = self.db_adapter.select_shift_tasks(shift, days_int)
-                self.flaws += len(days_int) - match_days
+            # establish all sequences of integer days
+            if sequences:
+                first_days = schedule_analytics.days_int(
+                    sequences[0][4]
+                )  # 4 is weekday
+                # Init int sequences with 1 sequence for 1 int day associated with first sequence weekday
+                int_days_sequences = []
+                for i in range(len(first_days)):
+                    int_days_sequences.append([])
+
+                for i, (sequence_id, shift, seq_group, order, weekday) in enumerate(
+                    sequences
+                ):
+                    days_int = schedule_analytics.days_int(weekday)
+
+                    # for each int day, we push it at the right place in int_days_sequences
+                    for j, day_int in enumerate(days_int):
+                        int_days_sequences[j].append((day_int, shift))
+
+                # estimate flaws for each sequence and person
+                for int_days_sequence in int_days_sequences:
+                    people = []
+                    min_coverage = 0
+                    for day_int, shift in int_days_sequence:
+                        min_coverage = max(
+                            min_coverage,
+                            len(
+                                self.db_adapter.select(
+                                    "task",
+                                    ["id"],
+                                    where_close=f"shift_id='{shift}' AND day={day_int}",
+                                )
+                            ),
+                        )  # add max in case coverage is not constant, which should not happens
+                        people.extend(
+                            [
+                                person[0]
+                                for person in self.db_adapter.select(
+                                    "task",
+                                    ["person_id"],
+                                    where_close=f"shift_id='{shift}' AND day={day_int}",
+                                )
+                            ]
+                        )
+
+                    person_count = len(set(people))
+                    # no flaw = only as many person are doing all the tasks as min coverage
+                    # max flaw = as much person as sequence length minus min coverage
+                    self.flaws_max += person_count
+                    self.flaws += abs(min_coverage - person_count)
 
         if self.flaws_max:
-            self.score = round(100 - (100 * (1 - self.flaws / self.flaws_max)), 0)
+            self.score = round(100 - (100 * (self.flaws / self.flaws_max)), 0)
 
 
 @dataclasses.dataclass
@@ -311,7 +362,7 @@ class WeekWorktime(FlawsAnalytic):
     max_worktime_minutes: int = 50 * 3600  # 50 hours
 
     def compute(self):
-        time_span = self.db_adapter.select("schedule", ["time_span_days"])[0]
+        time_span = self.db_adapter.select("schedule", ["time_span_days"])[0][0]
         schedule_analytics = ScheduleAnalytics(self.db_adapter)
 
         try:
@@ -324,13 +375,13 @@ class WeekWorktime(FlawsAnalytic):
             while day < time_span:
                 # fetch working time for the week
                 tasks = self.db_adapter.select_person_tasks(
-                    person, days=[a for a in range(day, day + 7)]
+                    person[0], days=[a for a in range(day, day + 7)]
                 )
                 duration = sum([duration for _, _, duration, _, _ in tasks])
 
                 # add previous day task duration from midnight to end_time (if exists)
                 previous_day_tasks = self.db_adapter.select_person_tasks(
-                    person, days=[day - 1]
+                    person[0], days=[day - 1]
                 )
                 for _, _, _, start_time, end_time in previous_day_tasks:
                     start_time = iso_time_to_minutes(start_time)
@@ -342,7 +393,7 @@ class WeekWorktime(FlawsAnalytic):
 
                 # remove last day task duration after midnight (if exists)
                 last_day_tasks = self.db_adapter.select_person_tasks(
-                    person, days=[day - 1]
+                    person[0], days=[day - 1]
                 )
                 for _, _, _, start_time, end_time in last_day_tasks:
                     start_time = iso_time_to_minutes(start_time)
@@ -357,7 +408,7 @@ class WeekWorktime(FlawsAnalytic):
                 day = day + 7
 
         if self.flaws_max:
-            self.score = round(100 - (100 * (1 - self.flaws / self.flaws_max)), 0)
+            self.score = round(100 - (100 * (self.flaws / self.flaws_max)), 0)
 
 
 @dataclasses.dataclass
@@ -371,20 +422,21 @@ class WorkerPreference(FlawsAnalytic):
     primary_people: List[str] = dataclasses.field(default_factory=list)
     secondary_people: List[str] = dataclasses.field(default_factory=list)
     shift: str = ""
-    weekdays: List[int] = dataclasses.field(default_factory=list)
+    # TODO: see if weekdays is needed
+    #    weekdays: List[int] = dataclasses.field(default_factory=list)
 
     def compute(self):
         # if all shifts are attributed to people other than primary or secondary groups, then
         # max flaw count is equal to the max number of shift that can be attributed
         schedule_analytics = ScheduleAnalytics(self.db_adapter)
-        days_int = schedule_analytics.days_int(self.weekdays)
+        days_int = [day for day in range(schedule_analytics.time_span)]
 
         coverages = self.db_adapter.select(
             "coverage",
             ["max_value"],
-            f"day IN {','.join(self.days)} AND shift_id='{self.shift}'",
+            f"shift_id='{self.shift}'",
         )
-        self.flaws_max = 3 * sum([max_val for max_val in coverages])
+        self.flaws_max = 3 * sum([max_val[0] for max_val in coverages])
 
         # estimate minimum flaws. Whenever all primary people are not available for 1 day,
         # it increases by 1 the min flaws
@@ -405,15 +457,15 @@ class WorkerPreference(FlawsAnalytic):
                 self.flaws_min += 1
 
         # estimate flaws
-        tasks = self.db_adapter.select_shift_tasks(shift_id=self.shift, days=day_int)
-        for task in tasks:
+        tasks = self.db_adapter.select_shift_tasks(shift_id=self.shift)
+        for task, person in tasks:
             flaw = 0
-            if task.person not in self.primary_people:
+            if person not in self.primary_people:
                 flaw = 1
-            elif task.person not in self.secondary_people:
+            elif person not in self.secondary_people:
                 flaw = 3
 
             self.flaws += flaw
 
         if self.flaws_max:
-            self.score = round(100 - (100 * (1 - self.flaws / self.flaws_max)), 0)
+            self.score = round(100 - (100 * (self.flaws / self.flaws_max)), 0)

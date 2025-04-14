@@ -389,144 +389,6 @@ class ScheduleDrawer(BaseDrawer):
             self.draw_sep(len(days) * self.day_width + self.block_width)
         self.draw_sep(120)
 
-        #############
-        # analytics
-        #############
-        # people hours
-        legend = ["Hours", "raw", "wo extremes"]
-        self.draw_indented_list(legend, first_width=15, width=10)
-        raw_values = [
-            (int(abs(person_data[4] - person_data[6])), int(person_data[4]))
-            for person_data in people_data
-        ]  # [(delta, target), ...]
-        min_value = min(raw_values)
-        max_value = max(raw_values)
-        wo_extremes_values = [
-            value for value in raw_values if value not in [min_value, max_value]
-        ]
-        min_wo_extremes_value = (
-            min(wo_extremes_values) if wo_extremes_values else min_value
-        )
-        max_wo_extremes_value = (
-            max(wo_extremes_values) if wo_extremes_values else max_value
-        )
-        self.draw_indented_list(
-            ["delta min (h)", min_value[0], min_wo_extremes_value[0]],
-            first_width=15,
-            width=10,
-        )
-        self.draw_indented_list(
-            [
-                "delta max (h)",
-                max_value[0],
-                max_wo_extremes_value[0],
-            ],
-            first_width=15,
-            width=10,
-        )
-        raw_std = standard_deviation([raw_value[0] for raw_value in raw_values])
-        wo_extremes_std = standard_deviation(
-            [wo_extremes_value[0] for wo_extremes_value in wo_extremes_values]
-        )
-        self.draw_indented_list(
-            ["std dev (h)", raw_std, wo_extremes_std], first_width=15, width=10
-        )
-        raw_hours_total_delta, raw_hours_total_target, raw_hours_score = hours_score(
-            raw_values
-        )
-        wo_hours_total_delta, wo_hours_total_target, wo_hours_score = hours_score(
-            wo_extremes_values
-        )
-        self.draw_indented_list(
-            [
-                "total dev (h)",
-                f"{int(raw_hours_total_delta)}",
-                f"{int(wo_hours_total_delta)}",
-            ],
-            first_width=15,
-            width=10,
-        )
-        self.draw_indented_list(
-            [
-                "total tgt (h)",
-                f"{int(raw_hours_total_target)}",
-                f"{int(wo_hours_total_target)}",
-            ],
-            first_width=15,
-            width=10,
-        )
-        self.draw_indented_list(
-            [
-                "score (%)",
-                f"{int(raw_hours_score)}%",
-                f"{int(wo_hours_score)}%",
-            ],
-            first_width=15,
-            width=10,
-        )
-        self.draw_sep(120)
-
-        # fairnesses
-        for index in [2, 3]:  # 2: night count, 3: weekend count
-            label = "Night count" if index == 2 else "Weekend count"
-            legend = [label, "raw", "wo extremes"]
-            self.draw_indented_list(legend, first_width=15, width=10)
-            raw_values = [person_data[index] for person_data in people_data]
-            min_value = min(raw_values)
-            max_value = max(raw_values)
-            wo_extremes_values = [
-                value for value in raw_values if value not in [min_value, max_value]
-            ]
-            min_wo_extremes_value = (
-                min(wo_extremes_values) if wo_extremes_values else min_value
-            )
-            max_wo_extremes_value = (
-                max(wo_extremes_values) if wo_extremes_values else max_value
-            )
-            self.draw_indented_list(
-                ["min", min_value, min_wo_extremes_value], first_width=15, width=10
-            )
-            self.draw_indented_list(
-                [
-                    "max",
-                    max_value,
-                    max_wo_extremes_value,
-                ],
-                first_width=15,
-                width=10,
-            )
-            raw_std = standard_deviation(raw_values)
-            wo_extremes_std = standard_deviation(wo_extremes_values)
-            self.draw_indented_list(
-                ["std dev", raw_std, wo_extremes_std], first_width=15, width=10
-            )
-
-            raw_fairness_delta_total, raw_fairness_score = fairness_score(raw_values)
-            wo_fairness_delta_total, wo_fairness_score = fairness_score(
-                wo_extremes_values
-            )
-            self.draw_indented_list(
-                [
-                    "total dev",
-                    f"{int(raw_fairness_delta_total)}",
-                    f"{int(wo_fairness_delta_total)}",
-                ],
-                first_width=15,
-                width=10,
-            )
-
-            self.draw_indented_list(
-                [
-                    "score (%)",
-                    f"{int(raw_fairness_score)}%",
-                    f"{int(wo_fairness_score)}%",
-                ],
-                first_width=15,
-                width=10,
-            )
-
-            self.draw_sep(120)
-
 
 class CapacityDrawer(BaseDrawer):
     """
@@ -714,9 +576,7 @@ class FlawDrawer(BaseDrawer):
         # hours
         for hour_objective in self.model_config_data.get("hour_deviation_obj", []):
             for i, people_group in enumerate(hour_objective.get("people_groups", [])):
-                hour_deviation = HoursDeviation(
-                    self.db_adapter, people=hour_objective.people
-                )
+                hour_deviation = HoursDeviation(self.db_adapter, people=people_group)
                 hour_deviation.compute()
                 analytics_instances[f"Hour deviation, group {i}"] = hour_deviation
 
@@ -732,7 +592,7 @@ class FlawDrawer(BaseDrawer):
             shift_fairness = ShiftFairness(
                 self.db_adapter,
                 shift=shift_id,
-                people=self.db_adapter.select("person", ["id"]),
+                people=[entry[0] for entry in self.db_adapter.select("person", ["id"])],
             )
             shift_fairness.compute()
             analytics_instances[f"Shift fairness ({shift_id})"] = shift_fairness
@@ -745,12 +605,31 @@ class FlawDrawer(BaseDrawer):
         # week worktime
         week_worktime = WeekWorktime(self.db_adapter)
         week_worktime.compute()
-        analytics_instances[f"Week worktime"] = sequence
+        analytics_instances[f"Week worktime"] = week_worktime
 
         # preferences
-        # TODO: see if preference should move to config or if a ShiftGrouping table should be added
-        """
-        preference = WorkerPreference(self.db_adapter)
-        preference.compute()
-        analytics_instances[f"Preference"] = preference
-        """
+        for i, preference_data in enumerate(
+            self.model_config_data.get("preference_obj", [])
+        ):
+            preference = WorkerPreference(
+                self.db_adapter,
+                primary_people=preference_data["primary_people"],
+                secondary_people=preference_data["secondary_people"],
+                shift=preference_data["shift"],
+            )
+            preference.compute()
+            analytics_instances[f"Preference"] = preference
+
+        self.draw_sep(104)
+        self.draw_indented_list(
+            ["objective efficiency", "score", "flaws min", "flaws", "flaws max"], 40, 25
+        )
+        for name, instance in analytics_instances.items():
+            line = [
+                name,
+                f"{round(instance.score)} %",
+                instance.flaws_min,
+                instance.flaws,
+                instance.flaws_max,
+            ]
+            self.draw_indented_list(line, 40, 25)

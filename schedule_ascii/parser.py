@@ -140,12 +140,14 @@ class JSONParser:
 
         for i, sequence in enumerate(self.json_data["sequences"]):
             db_adapter.insert(
-                i,
                 "sequence",
-                sequence["shift"],
-                sequence["group"],
-                sequence["order"],
-                sequence["day"],
+                (
+                    i,
+                    sequence["shift"],
+                    sequence["group"],
+                    sequence["order"],
+                    sequence["day"],
+                ),
             )
 
         db_adapter.commit()
