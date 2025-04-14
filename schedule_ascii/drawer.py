@@ -443,7 +443,9 @@ class CapacityDrawer(BaseDrawer):
         self.draw_sep(len(days) * self.day_width + self.block_width)
 
         # needs & capacities
-        total_capacity_people = [[]] * len(days)
+        total_capacity_people = []
+        for i in range(len(days)):
+            total_capacity_people.append([])
         total_covered = [0] * len(days)
         total_min_coverage = [0] * len(days)
         total_max_coverage = [0] * len(days)
@@ -501,7 +503,7 @@ class CapacityDrawer(BaseDrawer):
                     is_preallocated = self.db_adapter.select(
                         "preallocation",
                         ["id"],
-                        f"person_id='{person_id}' AND day={day} AND (shift_id!='{shift_id}')",
+                        f"person_id='{person_id}' AND day={day} AND shift_id!='{shift_id}'",
                     )
 
                     # ignore person if excluded for this day and shift
