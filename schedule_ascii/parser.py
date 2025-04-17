@@ -12,7 +12,7 @@ class JSONParser:
     parse json data and store to an sqlite DB file
     """
 
-    def __init__(self, json_file_path):
+    def __init__(self, json_file_path, start_date=None, end_date=None):
         self.json_file_path = path.abspath(json_file_path)
 
         # load data file
@@ -50,7 +50,8 @@ class JSONParser:
                     person_data["activity_rate"],
                     0,
                     0,
-                    person_data.get("work_target_minutes", 0) / 60,
+                    #                    person_data.get("work_target_minutes", 0) / 60,  # TODO: see if we still want to compute analytics own targets instead of using engine targets
+                    0,
                     0,
                     0,
                     0,

@@ -1,8 +1,5 @@
 import datetime
 from schedule_ascii.analytics import (
-    standard_deviation,
-    hours_score,
-    fairness_score,
     HoursDeviation,
     ExtraHours,
     ShiftFairness,
@@ -343,13 +340,6 @@ class ScheduleDrawer(BaseDrawer):
             "person",
             [
                 "id",
-                "activity_rate",
-                "night_count",
-                "weekend_count",
-                "target_hours",
-                "holiday_hours",
-                "effective_hours",
-                "debt_hours",
             ],
         )
         start_day, time_span_days = self.db_adapter.select(

@@ -37,55 +37,6 @@ def standard_deviation(values):
         return 0.0
 
 
-def hours_score(values):
-    """
-    Compute a score from 0 to 100 for hours targets
-    formula: 100 - total sum of deviation divided by total sum of target, in percentage
-    maximum deviation factor is caped to 1
-
-    :param values: list of tuples [(delta, target), ...]
-    :return:
-    """
-    target_values = []
-    delta_values = []
-
-    for value in values:
-        delta_values.append(value[0])
-        target_values.append(value[1])
-    total_delta = sum(delta_values)
-    total_target = sum(target_values)
-    try:
-        return (
-            total_delta,
-            total_target,
-            round(100 - (100 * min(total_delta / total_target, 1)), 1),
-        )
-    except ZeroDivisionError:
-        return total_delta, total_target, 0.0
-
-
-def fairness_score(values):
-    """
-    Compute a score of fairness from 0 to 100 for
-    formula: score = 100 - total sum of deviation divided by total sum of target, in percentage
-
-    :param values: list of tuples [(delta, target), ...]
-    :return:
-    """
-    if not values:
-        return 0, 0.0
-
-    total_sum = sum(values)
-    mean = total_sum / len(values)
-    total_deviation = sum([abs(value - mean) for value in values])
-    try:
-        return total_deviation, round(
-            100 - (100 * min(total_deviation / total_sum, 1)), 1
-        )
-    except ZeroDivisionError:
-        return total_deviation, 0.0
-
-
 @dataclasses.dataclass
 class DBAnalytics:
     db_adapter: DBAdapter
@@ -142,10 +93,11 @@ class ScheduleAnalytics(DBAnalytics):
             if iso_day.weekday() in [5, 6]:
                 self.weekend_days.append(day_int)
 
-    def days_int(self, weekday):
+    def days_int(self, weekday, start_day=0):
         """
-        return all days that match weekday
+        return all days that match weekday starting from start_day
         :param weekday: 0 to 6 week day
+        :param start_day: 0 to time_span, start searching from this day
         :return: List of day integers
         """
         days_int = []
@@ -153,7 +105,7 @@ class ScheduleAnalytics(DBAnalytics):
             "schedule", ["start_day", "time_span_days"]
         )[0]
         start_day_iso = datetime.date.fromisoformat(start_day_str)
-        for day_int in range(time_span):
+        for day_int in range(start_day, time_span):
             iso_day = start_day_iso + datetime.timedelta(days=day_int)
             if iso_day.weekday() == weekday:
                 days_int.append(day_int)
@@ -286,6 +238,7 @@ class Sequences(FlawsAnalytic):
 
     def compute(self):
         schedule_analytics = ScheduleAnalytics(self.db_adapter)
+        schedule_analytics.compute()
 
         sequences = self.db_adapter.select(
             "sequence", ["id", "shift_id", "seq_group", "seq_order", "weekday"]
@@ -300,22 +253,67 @@ class Sequences(FlawsAnalytic):
             )
             # establish all sequences of integer days
             if sequences:
-                first_days = schedule_analytics.days_int(
-                    sequences[0][4]
-                )  # 4 is weekday
-                # Init int sequences with 1 sequence for 1 int day associated with first sequence weekday
                 int_days_sequences = []
-                for i in range(len(first_days)):
-                    int_days_sequences.append([])
 
-                for i, (sequence_id, shift, seq_group, order, weekday) in enumerate(
-                    sequences
-                ):
-                    days_int = schedule_analytics.days_int(weekday)
+                # init a list of [weekdays, offset to next weekday, shift] in order to iterate over schedule period
+                # index 4 is weekday, index 1 is shift
+                weekdays_offsets = [
+                    [sequence[4], None, sequence[1]] for sequence in sequences
+                ]
+                weekday = weekdays_offsets[0][0]
+                for pos in range(len(weekdays_offsets) - 1):
+                    next_weekday = weekdays_offsets[pos + 1][0]
+                    offset = next_weekday - weekday
+                    offset = (
+                        (7 - abs(offset)) if offset < 0 else offset
+                    )  # handle case where next weekday is less than weekday
+                    weekdays_offsets[pos][1] = offset
+                    weekday = next_weekday
 
-                    # for each int day, we push it at the right place in int_days_sequences
-                    for j, day_int in enumerate(days_int):
-                        int_days_sequences[j].append((day_int, shift))
+                # get first sequence int day and associated weekday_offset
+                min_int_day = 999999
+                weekday_offsets_pos = -1
+                for i, (weekday, offset, shift) in enumerate(weekdays_offsets):
+                    int_day = schedule_analytics.days_int(weekday)
+                    if int_day and int_day[0] < min_int_day:
+                        min_int_day = int_day[0]
+                        weekday_offsets_pos = i
+
+                # iterate over schedule days to establish int_days_sequences
+                int_day = min_int_day
+
+                if weekday_offsets_pos > -1:
+                    current_int_days_sequence = []
+                    while True:
+                        # add current int day to current sequence
+                        current_int_days_sequence.append(
+                            [int_day, weekdays_offsets[weekday_offsets_pos][2]]
+                        )
+
+                        # then iterate over offsets to get next day
+                        offset = weekdays_offsets[weekday_offsets_pos][1]
+                        if offset is None:
+                            # sequence is finished, append it to int_days_sequences
+                            # reboot position and set int_day to next sequence weekday int day
+                            int_days_sequences.append(current_int_days_sequence)
+                            weekday_offsets_pos = 0
+                            current_int_days_sequence = []
+                            try:
+                                int_day = schedule_analytics.days_int(
+                                    weekdays_offsets[0][0], start_day=int_day
+                                )[0]
+                            except IndexError:
+                                # next int day is outside schedule, exit loop
+                                break
+                        else:
+                            # continue current sequence if int_day still in schedule time span
+                            # increment weekday_offsets_pos and int_day
+                            int_day += offset
+                            weekday_offsets_pos += 1
+                            if int_day > schedule_analytics.time_span:
+                                # exit loop, append sequence and break
+                                int_days_sequences.append(current_int_days_sequence)
+                                break
 
                 # estimate flaws for each sequence and person
                 for int_days_sequence in int_days_sequences:
