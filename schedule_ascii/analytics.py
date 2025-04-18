@@ -149,7 +149,7 @@ class HoursDeviation(FlawsAnalytic):
             f"id IN ({','.join(people_str)})",
         ):
             deviations.append(target - effective)
-            max_deviations.append(target)
+            max_deviations.extend([target, 0])
 
         self.flaws = round(standard_deviation(deviations), 0)
         self.flaws_max = round(standard_deviation(max_deviations), 0)

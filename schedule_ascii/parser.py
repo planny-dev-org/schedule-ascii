@@ -199,13 +199,13 @@ class JSONParser:
                 db_adapter.select(
                     "preallocation",
                     ["id"],
-                    f"person_id='{person_id}' AND day in ({','.join([str(day) for day in target_int_days])})",
+                    f"person_id='{person_id}' AND day in ({','.join([str(day) for day in target_int_days])}) AND shift_id='HOL'",
                 )
             )
             db_adapter.update(
                 "person",
                 f"id='{person_id}'",
-                f"target_hours={target_days_count * standard_weektime_hours / 5}",
+                f"target_hours={target_days_count * (activity_rate / 100) * standard_weektime_hours / 5}",
             )
 
         db_adapter.commit()
