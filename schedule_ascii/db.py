@@ -29,11 +29,12 @@ class DBAdapter:
         :return:
         """
         # base resources
+        self.cur.execute("CREATE TABLE bank_holiday(id INTEGER PRIMARY KEY, day)")
         self.cur.execute(
             "CREATE TABLE schedule(id INTEGER PRIMARY KEY, start_day, time_span_days)"
         )
         self.cur.execute(
-            "CREATE TABLE person(id VARCHAR PRIMARY KEY, activity_rate, night_count, weekend_count, target_hours, holiday_hours, effective_hours, debt_hours)"
+            "CREATE TABLE person(id VARCHAR PRIMARY KEY, activity_rate, standard_weektime_hours, night_count, weekend_count, target_hours, holiday_hours, effective_hours, debt_hours)"
         )
         self.cur.execute(
             "CREATE TABLE shift(id VARCHAR PRIMARY KEY, display_name, ascii_display, duration, start_time, end_time)"
@@ -66,16 +67,6 @@ class DBAdapter:
               FOREIGN KEY (task_id) REFERENCES task(id))
             """
         )
-        # Liaison tables
-        self.cur.execute(
-            """
-            CREATE TABLE coverage_person(id INTEGER PRIMARY KEY,
-              coverage_id,
-              person_id,
-              FOREIGN KEY (coverage_id) REFERENCES coverage(id),
-              FOREIGN KEY (person_id) REFERENCES person(id))
-            """
-        )
         # Airtable people are skipped, it's an objective in new schedule version
         self.cur.execute(
             """
@@ -85,6 +76,17 @@ class DBAdapter:
               seq_order,
               weekday,
               FOREIGN KEY (shift_id) REFERENCES shift(id))
+            """
+        )
+
+        # Liaison tables
+        self.cur.execute(
+            """
+            CREATE TABLE coverage_person(id INTEGER PRIMARY KEY,
+              coverage_id,
+              person_id,
+              FOREIGN KEY (coverage_id) REFERENCES coverage(id),
+              FOREIGN KEY (person_id) REFERENCES person(id))
             """
         )
 

@@ -3,6 +3,7 @@ import json
 import logging
 import datetime
 
+from schedule_ascii.analytics import ScheduleAnalytics
 
 LOG = logging.getLogger(__name__)
 
@@ -12,7 +13,7 @@ class JSONParser:
     parse json data and store to an sqlite DB file
     """
 
-    def __init__(self, json_file_path, start_date=None, end_date=None):
+    def __init__(self, json_file_path):
         self.json_file_path = path.abspath(json_file_path)
 
         # load data file
@@ -29,6 +30,15 @@ class JSONParser:
         Store json data to db tables
         :return:
         """
+
+        for i, bank_holiday in enumerate(self.json_data["schedule"]["bank_holidays"]):
+            db_adapter.insert(
+                "bank_holiday",
+                (
+                    i,
+                    bank_holiday,
+                ),
+            )
 
         db_adapter.insert(
             "schedule",
@@ -48,6 +58,7 @@ class JSONParser:
                 (
                     person_data["id"],
                     person_data["activity_rate"],
+                    person_data["standard_weektime_hours"],
                     0,
                     0,
                     #                    person_data.get("work_target_minutes", 0) / 60,  # TODO: see if we still want to compute analytics own targets instead of using engine targets
@@ -167,6 +178,34 @@ class JSONParser:
         for person_id, effective_hours in db_adapter.select_person_effective_hours():
             db_adapter.update(
                 "person", f"id='{person_id}'", f"effective_hours={effective_hours}"
+            )
+
+        # establish int days used to compute hours targets
+        target_int_days = []
+        for i in range(self.json_data["schedule"]["num_of_days"]):
+            iso_day = schedule_start + datetime.timedelta(days=i)
+            if (
+                iso_day.weekday() not in [5, 6]
+                and iso_day.isoformat()
+                not in self.json_data["schedule"]["bank_holidays"]
+            ):
+                target_int_days.append(i)
+
+        for person_id, activity_rate, standard_weektime_hours in db_adapter.select(
+            "person", ["id", "activity_rate", "standard_weektime_hours"]
+        ):
+            # remove holidays from int days target
+            target_days_count = len(target_int_days) - len(
+                db_adapter.select(
+                    "preallocation",
+                    ["id"],
+                    f"person_id='{person_id}' AND day in ({','.join([str(day) for day in target_int_days])})",
+                )
+            )
+            db_adapter.update(
+                "person",
+                f"id='{person_id}'",
+                f"target_hours={target_days_count * standard_weektime_hours / 5}",
             )
 
         db_adapter.commit()
