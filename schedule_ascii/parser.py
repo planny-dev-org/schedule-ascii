@@ -194,14 +194,20 @@ class JSONParser:
         for person_id, activity_rate, standard_weektime_hours in db_adapter.select(
             "person", ["id", "activity_rate", "standard_weektime_hours"]
         ):
-            # remove holidays from int days target
-            target_days_count = len(target_int_days) - len(
-                db_adapter.select(
+            # compute holidays
+            holidays_count = len(db_adapter.select(
                     "preallocation",
                     ["id"],
                     f"person_id='{person_id}' AND day in ({','.join([str(day) for day in target_int_days])}) AND shift_id='HOL'",
-                )
+                ))
+            db_adapter.update(
+                "person",
+                f"id='{person_id}'",
+                f"holiday_hours={holidays_count * (activity_rate / 100) * standard_weektime_hours / 5}",
             )
+
+            # remove holidays from int days target
+            target_days_count = len(target_int_days) - holidays_count
             db_adapter.update(
                 "person",
                 f"id='{person_id}'",
