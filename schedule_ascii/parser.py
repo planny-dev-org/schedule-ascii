@@ -181,25 +181,21 @@ class JSONParser:
             )
 
         # establish int days used to compute hours targets
-        target_int_days = []
-        for i in range(self.json_data["schedule"]["num_of_days"]):
-            iso_day = schedule_start + datetime.timedelta(days=i)
-            if (
-                iso_day.weekday() not in [5, 6]
-                and iso_day.isoformat()
-                not in self.json_data["schedule"]["bank_holidays"]
-            ):
-                target_int_days.append(i)
+        schedule_analytics = ScheduleAnalytics(db_adapter)
+        schedule_analytics.compute()
+        target_int_days = schedule_analytics.target_int_days()
 
         for person_id, activity_rate, standard_weektime_hours in db_adapter.select(
             "person", ["id", "activity_rate", "standard_weektime_hours"]
         ):
             # compute holidays
-            holidays_count = len(db_adapter.select(
+            holidays_count = len(
+                db_adapter.select(
                     "preallocation",
                     ["id"],
                     f"person_id='{person_id}' AND day in ({','.join([str(day) for day in target_int_days])}) AND shift_id='HOL'",
-                ))
+                )
+            )
             db_adapter.update(
                 "person",
                 f"id='{person_id}'",

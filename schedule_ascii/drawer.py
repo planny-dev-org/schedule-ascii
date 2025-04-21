@@ -1,5 +1,6 @@
 import datetime
 from schedule_ascii.analytics import (
+    ScheduleAnalytics,
     HoursDeviation,
     ExtraHours,
     ShiftFairness,
@@ -235,6 +236,9 @@ class BaseDrawer:
                 "Diff(h)",
                 "Hol(h)",
                 "Deb(h)",
+                "Av(h)",
+                "AvN(h)",
+                "AvW(h)",
                 "Nc",
                 "Wc",
             ],
@@ -246,6 +250,7 @@ class BaseDrawer:
             [
                 "id",
                 "activity_rate",
+                "standard_weektime_hours",
                 "night_count",
                 "weekend_count",
                 "target_hours",
@@ -264,6 +269,7 @@ class BaseDrawer:
             (
                 person_id,
                 activity_rate,
+                standard_weektime_hours,
                 night_count,
                 weekend_count,
                 target_hours,
@@ -277,6 +283,36 @@ class BaseDrawer:
             total_holiday += holiday_hours
             total_effective += effective_hours
             total_debt += debt_hours
+
+            available_days = self.db_adapter.select_person_available_days(person_id)
+            coverage_days = self.db_adapter.select_person_coverage_days(person_id)
+
+            # available hours
+            coeff = standard_weektime_hours * activity_rate / 500
+            max_av_hours = int(len(coverage_days) * coeff)
+            min_av_hours = int(
+                #                (len(available_days) - len(unavailable_days)) * coeff,
+                (len(available_days))
+                * coeff
+            )
+
+            # available night hours
+            night_shifts = [
+                shift[0]
+                for shift in self.db_adapter.select(
+                    "shift", ["id"], "start_time>end_time"
+                )
+            ]
+
+            nights_available_days = self.db_adapter.select_person_available_days(
+                person_id, night_shifts
+            )
+            nights_coverage_days = self.db_adapter.select_person_coverage_days(
+                person_id, night_shifts
+            )
+            max_night_hours = int(len(nights_coverage_days) * coeff)
+            min_night_hours = int(len(nights_available_days) * coeff)
+
             self.draw_indented_list(
                 [
                     person_id,
@@ -286,6 +322,9 @@ class BaseDrawer:
                     round(effective_hours - target_hours, 1),
                     round(holiday_hours, 1),
                     round(debt_hours, 1),
+                    f"{min_av_hours}-{max_av_hours}",
+                    f"{min_night_hours}-{max_night_hours}",
+                    f"",
                     night_count,
                     weekend_count,
                 ],
@@ -367,7 +406,7 @@ class ScheduleDrawer(BaseDrawer):
             preal_items = {}
             for display, day, _, _, _ in tasks:
                 task_items[day] = display
-            for display, day in preals:
+            for display, day, _ in preals:
                 preal_items[day] = display
             task_labels = [person_data[0]]
             preal_labels = [f"{person_data[0]}[P]"]

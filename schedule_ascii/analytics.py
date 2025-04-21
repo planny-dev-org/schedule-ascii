@@ -112,6 +112,27 @@ class ScheduleAnalytics(DBAnalytics):
 
         return days_int
 
+    def target_int_days(self):
+        """
+        Return available work days in the schedule
+        A work day is any day that is not a weekend nor a bank holiday
+        """
+        start_date, days_count = self.db_adapter.select(
+            "schedule", ["start_day", "time_span_days"]
+        )[0]
+        start_date = datetime.date.fromisoformat(start_date)
+        bank_holidays = self.db_adapter.select("bank_holiday", ["day"])
+        target_int_days = []
+        for i in range(days_count):
+            iso_day = start_date + datetime.timedelta(days=i)
+            if (
+                iso_day.weekday() not in [5, 6]
+                and iso_day.isoformat() not in bank_holidays
+            ):
+                target_int_days.append(i)
+
+        return target_int_days
+
 
 @dataclasses.dataclass
 class FlawsAnalytic(DBAnalytics):

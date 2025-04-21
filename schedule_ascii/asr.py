@@ -8,6 +8,7 @@ from schedule_ascii.db import DBAdapter
 from schedule_ascii.parser import JSONParser
 from schedule_ascii.drawer import ScheduleDrawer, CapacityDrawer, FlawDrawer
 
+# logging.basicConfig(level=logging.DEBUG)
 logging.basicConfig()
 
 
