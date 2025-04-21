@@ -4,7 +4,7 @@ from typing import List
 import dataclasses
 import math
 
-from db import DBAdapter
+from schedule_ascii.db import DBAdapter
 
 
 def iso_time_to_minutes(iso_time):
