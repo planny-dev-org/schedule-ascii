@@ -313,6 +313,15 @@ class BaseDrawer:
             max_night_hours = int(len(nights_coverage_days) * coeff)
             min_night_hours = int(len(nights_available_days) * coeff)
 
+            # available weekend hours
+            schedule_analytics = ScheduleAnalytics(self.db_adapter)
+            schedule_analytics.compute()
+            weekend_days = schedule_analytics.weekend_days
+            we_coverage_days = [day for day in coverage_days if day not in weekend_days]
+            we_available_days = [day for day in available_days if day not in weekend_days]
+            max_we_hours = int(len(we_coverage_days) * coeff)
+            min_we_hours = int(len(we_available_days) * coeff)
+
             self.draw_indented_list(
                 [
                     person_id,
@@ -324,7 +333,7 @@ class BaseDrawer:
                     round(debt_hours, 1),
                     f"{min_av_hours}-{max_av_hours}",
                     f"{min_night_hours}-{max_night_hours}",
-                    f"",
+                    f"{min_we_hours}-{max_we_hours}",
                     night_count,
                     weekend_count,
                 ],
