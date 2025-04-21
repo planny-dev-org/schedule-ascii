@@ -597,6 +597,46 @@ class CapacityDrawer(BaseDrawer):
         self.draw_indented_list(["total max coverage"] + total_max_coverage)
         self.draw_sep(len(days) * self.day_width + self.block_width)
 
+        # draw hours
+        to_do_hours = 0
+        contract_hours = 0
+        available_hours = 0
+        to_do_night_hours = 0
+        to_do_weekend_hours = 0
+        schedule_analytics = ScheduleAnalytics(self.db_adapter)
+        schedule_analytics.compute()
+        weekend_days = schedule_analytics.weekend_days
+        bank_holidays = [bank_holiday[0] for bank_holiday in self.db_adapter.select("bank_holiday", ["day"])]
+        week_days = set([day for day in range(time_span_days)]) - set(weekend_days + bank_holidays)
+
+        for person_id, activity_rate, standard_weektime_hours in self.db_adapter.select("person", ["id", "activity_rate", "standard_weektime_hours"]):
+            contract_hours += len(week_days) * activity_rate * standard_weektime_hours / 500
+            available_days = self.db_adapter.select_person_available_days()
+            available_hours += len(available_days) * activity_rate * standard_weektime_hours / 500
+
+        for day, min_value, shift_id in self.db_adapter.select("coverage", ["day", "min_value", "shift_id"]):
+            start_time, end_time, duration = self.db_adapter.select("shift",
+                                                                    ["start_time", "end_time", "duration"],
+                                                                    f"shift_id={shift_id}")[0]
+            cov_duration = min_value * duration
+            to_do_hours += cov_duration
+            if start_time > end_time:
+                to_do_night_hours += cov_duration
+            if day in weekend_days:
+                to_do_weekend_hours += cov_duration
+
+        self.draw_indented_list(["to do hours"] + [round(to_do_hours, 0)])
+        self.draw_indented_list(["to do night hours"] + [round(to_do_night_hours, 0)])
+        self.draw_indented_list(["to do weekend hours"] + [round(to_do_weekend_hours, 0)])
+        self.draw_indented_list(["contractual hours"] + [round(contract_hours, 0)])
+
+
+
+
+
+
+
+
 
 class FlawDrawer(BaseDrawer):
     """
