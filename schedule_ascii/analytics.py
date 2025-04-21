@@ -81,7 +81,7 @@ class ScheduleAnalytics(DBAnalytics):
                 ):
                     self.available_work_hours += 8
 
-        self.total_work_hours = self.db_adapter.select_total_effective_hours()
+        self.total_work_hours = self.db_adapter.select_total_effective_hours() or 0
 
         iso_day = datetime.date.fromisoformat(
             self.db_adapter.select("schedule", ["start_day"])[0][0]

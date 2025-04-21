@@ -85,6 +85,9 @@ class JSONParser:
                 db_adapter.insert("shift_label", (shift_data["id"], label))
 
         for i, task_data in enumerate(self.json_data["tasks"]):
+            # retro compatibility with scheduler legacy
+            if task_data["shift"] is None:
+                task_data["shift"] = "HOL" if task_data["type"] == "VACATION" else "OFF"
             task_date = datetime.date.fromisoformat(task_data["day"])
             task_date_int = (task_date - schedule_start).days
             db_adapter.insert(

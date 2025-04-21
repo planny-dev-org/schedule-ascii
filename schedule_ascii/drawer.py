@@ -9,8 +9,6 @@ from schedule_ascii.analytics import (
     WorkerPreference,
 )
 
-SHIFT_DISPLAY_SEQ = "ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
-
 
 class BColors:
     HEADER = "\033[95m"
@@ -100,7 +98,7 @@ class BaseDrawer:
             "8",
             "9",
             "0",
-        ]
+        ] * 10
         holiday_shift = self.db_adapter.select("shift", ["id"], "id='HOL'")
         if holiday_shift:
             self.db_adapter.update(

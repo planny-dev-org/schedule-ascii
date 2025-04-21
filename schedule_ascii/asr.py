@@ -8,6 +8,7 @@ from schedule_ascii.db import DBAdapter
 from schedule_ascii.parser import JSONParser
 from schedule_ascii.drawer import ScheduleDrawer, CapacityDrawer, FlawDrawer
 
+
 # logging.basicConfig(level=logging.DEBUG)
 logging.basicConfig()
 
@@ -190,7 +191,7 @@ if __name__ == "__main__":
         "output_file_path", help="Engine output JSON file (usualy outputsch.json)"
     )
     parser.add_argument(
-        "config_file_path", help="Engine config JSON file (usualy model_config.json)"
+        "--config_file_path", help="Engine config JSON file (usualy model_config.json)"
     )
     parser.add_argument(
         "--monthly",
