@@ -29,11 +29,12 @@ class DBAdapter:
         :return:
         """
         # base resources
+        self.cur.execute("CREATE TABLE bank_holiday(id INTEGER PRIMARY KEY, day)")
         self.cur.execute(
             "CREATE TABLE schedule(id INTEGER PRIMARY KEY, start_day, time_span_days)"
         )
         self.cur.execute(
-            "CREATE TABLE person(id VARCHAR PRIMARY KEY, activity_rate, night_count, weekend_count, target_hours, holiday_hours, effective_hours, debt_hours)"
+            "CREATE TABLE person(id VARCHAR PRIMARY KEY, activity_rate, standard_weektime_hours, night_count, weekend_count, target_hours, holiday_hours, effective_hours, debt_hours)"
         )
         self.cur.execute(
             "CREATE TABLE shift(id VARCHAR PRIMARY KEY, display_name, ascii_display, duration, start_time, end_time)"
@@ -66,16 +67,6 @@ class DBAdapter:
               FOREIGN KEY (task_id) REFERENCES task(id))
             """
         )
-        # Liaison tables
-        self.cur.execute(
-            """
-            CREATE TABLE coverage_person(id INTEGER PRIMARY KEY,
-              coverage_id,
-              person_id,
-              FOREIGN KEY (coverage_id) REFERENCES coverage(id),
-              FOREIGN KEY (person_id) REFERENCES person(id))
-            """
-        )
         # Airtable people are skipped, it's an objective in new schedule version
         self.cur.execute(
             """
@@ -85,6 +76,17 @@ class DBAdapter:
               seq_order,
               weekday,
               FOREIGN KEY (shift_id) REFERENCES shift(id))
+            """
+        )
+
+        # Liaison tables
+        self.cur.execute(
+            """
+            CREATE TABLE coverage_person(id INTEGER PRIMARY KEY,
+              coverage_id,
+              person_id,
+              FOREIGN KEY (coverage_id) REFERENCES coverage(id),
+              FOREIGN KEY (person_id) REFERENCES person(id))
             """
         )
 
@@ -173,6 +175,63 @@ class DBAdapter:
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 
+    def select_person_coverage_days(self, person_id, shifts=None):
+        """
+        Select all int days when person is assigned to at least 1 coverage of the given shifts
+        if shifts is None, select all days when person is assigned to at least 1 coverage
+        """
+        request = f"""
+            SELECT day FROM coverage INNER JOIN coverage_person ON coverage.id=coverage_person.coverage_id WHERE person_id='{person_id}'
+        """
+        if shifts:
+            shift_ids = [f"'{shift_id}'" for shift_id in shifts]
+            request = f"{request} AND shift_id IN ({','.join(shift_ids)})"
+
+        return set([day[0] for day in self.cur.execute(request).fetchall()])
+
+    def select_person_available_days(self, person_id, shifts=None):
+        """
+        Select all int days when person is available for at least 1 of the given shifts
+        :param person_id: person to get availability for
+        :param shifts: Optional list of shifts to get availability on, use all shifts if not given
+        :return:
+        """
+        if shifts is None:
+            shifts = [
+                shift[0]
+                for shift in self.select("shift", ["id"])
+                if shift[0] not in ["HOL", "OFF"]
+            ]
+        coverage_days = self.select_person_coverage_days(person_id, shifts)
+        available_days = []
+        preallocations = {
+            day: shift_id
+            for _, day, shift_id in self.select_person_preals(person_id, coverage_days)
+        }
+
+        for day in coverage_days:
+            available = True
+            # if a preallocation exists for the day and is not on one of the shifts, person is not available this day
+            preallocated_shift = preallocations.get(day, None)
+            if preallocated_shift is not None and preallocated_shift not in shifts:
+                available = False
+            else:
+                excluded = True
+                # check day exclusions, person is considered excluded only if all shifts are excluded for the day
+                for shift_id in shifts:
+                    exclusions = self.select_person_exclusions(
+                        person_id, shift_id, days=[day]
+                    )
+                    if not exclusions:
+                        excluded = False
+                        break
+                if excluded:
+                    available = False
+            if available:
+                available_days.append(day)
+
+        return available_days
+
     def select_shift_tasks(self, shift_id, days=None, person=""):
         """
         Select shift tasks
@@ -193,10 +252,11 @@ class DBAdapter:
         Select person preallocations
         """
         request = f"""
-            SELECT ascii_display, day FROM preallocation INNER JOIN shift ON shift.id=preallocation.shift_id WHERE person_id='{person_id}'
+            SELECT ascii_display, day, shift_id FROM preallocation INNER JOIN shift ON shift.id=preallocation.shift_id WHERE person_id='{person_id}'
         """
         if days:
-            request = f"{request} AND day IN ({','.join(days)})"
+            days_str = [str(day) for day in days]
+            request = f"{request} AND day IN ({','.join(days_str)})"
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 
@@ -208,9 +268,10 @@ class DBAdapter:
             SELECT shift_id, day FROM exclusion WHERE person_id='{person_id}'
         """
         if shift_id:
-            request = f"{request} AND shift_id={shift_id}"
+            request = f"{request} AND shift_id='{shift_id}'"
         if days:
-            request = f"{request} AND day IN ({','.join(days)})"
+            days_str = [str(day) for day in days]
+            request = f"{request} AND day IN ({','.join(days_str)})"
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
 

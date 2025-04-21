@@ -3,6 +3,7 @@ import json
 import logging
 import datetime
 
+from schedule_ascii.analytics import ScheduleAnalytics
 
 LOG = logging.getLogger(__name__)
 
@@ -30,6 +31,15 @@ class JSONParser:
         :return:
         """
 
+        for i, bank_holiday in enumerate(self.json_data["schedule"]["bank_holidays"]):
+            db_adapter.insert(
+                "bank_holiday",
+                (
+                    i,
+                    bank_holiday,
+                ),
+            )
+
         db_adapter.insert(
             "schedule",
             (
@@ -48,9 +58,11 @@ class JSONParser:
                 (
                     person_data["id"],
                     person_data["activity_rate"],
+                    person_data["standard_weektime_hours"],
                     0,
                     0,
-                    person_data.get("work_target_minutes", 0) / 60,
+                    #                    person_data.get("work_target_minutes", 0) / 60,  # TODO: see if we still want to compute analytics own targets instead of using engine targets
+                    0,
                     0,
                     0,
                     0,
@@ -166,6 +178,36 @@ class JSONParser:
         for person_id, effective_hours in db_adapter.select_person_effective_hours():
             db_adapter.update(
                 "person", f"id='{person_id}'", f"effective_hours={effective_hours}"
+            )
+
+        # establish int days used to compute hours targets
+        schedule_analytics = ScheduleAnalytics(db_adapter)
+        schedule_analytics.compute()
+        target_int_days = schedule_analytics.target_int_days()
+
+        for person_id, activity_rate, standard_weektime_hours in db_adapter.select(
+            "person", ["id", "activity_rate", "standard_weektime_hours"]
+        ):
+            # compute holidays
+            holidays_count = len(
+                db_adapter.select(
+                    "preallocation",
+                    ["id"],
+                    f"person_id='{person_id}' AND day in ({','.join([str(day) for day in target_int_days])}) AND shift_id='HOL'",
+                )
+            )
+            db_adapter.update(
+                "person",
+                f"id='{person_id}'",
+                f"holiday_hours={holidays_count * (activity_rate / 100) * standard_weektime_hours / 5}",
+            )
+
+            # remove holidays from int days target
+            target_days_count = len(target_int_days) - holidays_count
+            db_adapter.update(
+                "person",
+                f"id='{person_id}'",
+                f"target_hours={target_days_count * (activity_rate / 100) * standard_weektime_hours / 5}",
             )
 
         db_adapter.commit()
