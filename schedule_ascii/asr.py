@@ -93,9 +93,8 @@ def split_json(input_json_path):
         updated_coverages = []
         for coverage_data in copy_data["coverages"]:
             updated_day_index = coverage_data["day"] - start_day_int
-            if (
-                updated_day_index > 0
-            ):  # negative index are out of this month and excluded
+            if 0 < updated_day_index < copy_data["schedule"]["num_of_days"]:
+                # only include index inside this month
                 coverage_data["day"] = updated_day_index
                 updated_coverages.append(coverage_data)
         copy_data["coverages"] = updated_coverages
