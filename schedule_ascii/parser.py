@@ -84,8 +84,35 @@ class JSONParser:
             for label in shift_data.get("labels", []):
                 db_adapter.insert("shift_label", (shift_data["id"], label))
 
+        # TODO: retro compatibility with scheduler legacy, to be removed
+        names = [shift_data["id"] for shift_data in self.json_data["shifts"]]
+        if "HOL" not in names:
+            db_adapter.insert(
+                "shift",
+                (
+                    "HOL",
+                    "HOL",
+                    "",
+                    0,
+                    "00:01:00",
+                    "23:59:59",
+                ),
+            )
+        if "OFF" not in names:
+            db_adapter.insert(
+                "shift",
+                (
+                    "OFF",
+                    "OFF",
+                    "",
+                    0,
+                    "00:01:00",
+                    "23:59:59",
+                ),
+            )
+
         for i, task_data in enumerate(self.json_data["tasks"]):
-            # retro compatibility with scheduler legacy
+            # TODO retro compatibility with scheduler legacy, to be removed
             if task_data["shift"] is None:
                 task_data["shift"] = "HOL" if task_data["type"] == "VACATION" else "OFF"
             task_date = datetime.date.fromisoformat(task_data["day"])
@@ -136,7 +163,7 @@ class JSONParser:
                         preallocation_data["shift"]
                         if preallocation_data["type"] == 2
                         else "HOL" if preallocation_data["type"] == 1 else "OFF"
-                    ),
+                    ),  # TODO: retro compatibility with scheduler legacy, to be removed
                     preallocation_data["person"],
                     preallocation_data["day"],
                 ),
