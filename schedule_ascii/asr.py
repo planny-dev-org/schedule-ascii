@@ -143,7 +143,7 @@ def split_json(input_json_path):
     return monthly_json_paths
 
 
-def do_draw(output_file_path, config_file_path, by_month=False):
+def do_draw(output_file_path, config_file_path=None, by_month=False):
 
     output_files_path = []
     if by_month:
@@ -171,7 +171,11 @@ def do_draw(output_file_path, config_file_path, by_month=False):
         capacity_drawer.draw()
 
         # analytics
-        flaw_drawer = FlawDrawer(db_adapter, json.load(open(config_file_path)))
+        if config_file_path is not None:
+            flaw_drawer = FlawDrawer(db_adapter, json.load(open(config_file_path)))
+        else:
+            # compatibility with old scheduler version
+            flaw_drawer = FlawDrawer(db_adapter)
         flaw_drawer.draw()
 
 
@@ -186,7 +190,7 @@ if __name__ == "__main__":
         "output_file_path", help="Engine output JSON file (usualy outputsch.json)"
     )
     parser.add_argument(
-        "config_file_path", help="Engine config JSON file (usualy model_config.json)"
+        "--config_file_path", help="Engine config JSON file (usualy model_config.json)"
     )
     parser.add_argument(
         "--monthly",

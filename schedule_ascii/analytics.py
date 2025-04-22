@@ -4,7 +4,7 @@ from typing import List
 import dataclasses
 import math
 
-from db import DBAdapter
+from schedule_ascii.db import DBAdapter
 
 
 def iso_time_to_minutes(iso_time):
@@ -68,8 +68,8 @@ class ScheduleAnalytics(DBAnalytics):
             shift_duration = self.db_adapter.select(
                 "shift", ["duration"], f"id='{shift_id}'"
             )[0][0]
-            self.min_coverage_work_hours += min_value * shift_duration / 3600
-            self.max_coverage_work_hours += max_value * shift_duration / 3600
+            self.min_coverage_work_hours += min_value * shift_duration
+            self.max_coverage_work_hours += max_value * shift_duration
 
         for person in self.db_adapter.select("person", ["id"]):
             person_id = person[0]
@@ -81,7 +81,7 @@ class ScheduleAnalytics(DBAnalytics):
                 ):
                     self.available_work_hours += 8
 
-        self.total_work_hours = self.db_adapter.select_total_effective_hours()
+        self.total_work_hours = self.db_adapter.select_total_effective_hours() or 0
 
         iso_day = datetime.date.fromisoformat(
             self.db_adapter.select("schedule", ["start_day"])[0][0]
@@ -196,13 +196,19 @@ class ExtraHours(FlawsAnalytic):
                 - schedule_analytics.available_work_hours
             ),
         )
-        self.flaws = round(
-            schedule_analytics.total_work_hours
-            - schedule_analytics.min_coverage_work_hours
+        self.flaws = max(
+            0,
+            round(
+                schedule_analytics.total_work_hours
+                - schedule_analytics.min_coverage_work_hours
+            ),
         )
-        self.flaws_max = round(
-            schedule_analytics.available_work_hours
-            - schedule_analytics.min_coverage_work_hours
+        self.flaws_max = max(
+            0,
+            round(
+                schedule_analytics.available_work_hours
+                - schedule_analytics.min_coverage_work_hours
+            ),
         )
 
         if self.flaws_max:

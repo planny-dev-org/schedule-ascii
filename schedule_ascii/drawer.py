@@ -9,8 +9,6 @@ from schedule_ascii.analytics import (
     WorkerPreference,
 )
 
-SHIFT_DISPLAY_SEQ = "ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
-
 
 class BColors:
     HEADER = "\033[95m"
@@ -100,7 +98,7 @@ class BaseDrawer:
             "8",
             "9",
             "0",
-        ]
+        ] * 10
         holiday_shift = self.db_adapter.select("shift", ["id"], "id='HOL'")
         if holiday_shift:
             self.db_adapter.update(
@@ -211,7 +209,7 @@ class BaseDrawer:
             self.draw_list(
                 [
                     shift_id,
-                    round(duration / 3600, 1),
+                    round(duration, 1),
                     start_time,
                     end_time,
                     ascii_display,
@@ -664,11 +662,18 @@ class FlawDrawer(BaseDrawer):
         analytics_instances = {}
 
         # hours
-        for hour_objective in self.model_config_data.get("hour_deviation_obj", []):
-            for i, people_group in enumerate(hour_objective.get("people_groups", [])):
-                hour_deviation = HoursDeviation(self.db_adapter, people=people_group)
-                hour_deviation.compute()
-                analytics_instances[f"Hour deviation, group {i}"] = hour_deviation
+        if self.model_config_data is not None:
+            for hour_objective in self.model_config_data.get("hour_deviation_obj", []):
+                for i, people_group in enumerate(
+                    hour_objective.get("people_groups", [])
+                ):
+                    hour_deviation = HoursDeviation(
+                        self.db_adapter, people=people_group
+                    )
+                    hour_deviation.compute()
+                    analytics_instances[f"Hour deviation, group {i}"] = hour_deviation
+        else:
+            self.draw_indented_list(["Hours objective (skipped)"])
 
         # extra hours
         extra_hours = ExtraHours(self.db_adapter)
@@ -676,16 +681,21 @@ class FlawDrawer(BaseDrawer):
         analytics_instances["Extra hours"] = extra_hours
 
         # fairness
-        for fairness_objective in self.model_config_data.get("shift_fairness_obj"):
-            shift_id = fairness_objective["shift_id"]
-            # TODO: use a person group when available in scheduler
-            shift_fairness = ShiftFairness(
-                self.db_adapter,
-                shift=shift_id,
-                people=[entry[0] for entry in self.db_adapter.select("person", ["id"])],
-            )
-            shift_fairness.compute()
-            analytics_instances[f"Shift fairness ({shift_id})"] = shift_fairness
+        if self.model_config_data is not None:
+            for fairness_objective in self.model_config_data.get("shift_fairness_obj"):
+                shift_id = fairness_objective["shift_id"]
+                # TODO: use a person group when available in scheduler
+                shift_fairness = ShiftFairness(
+                    self.db_adapter,
+                    shift=shift_id,
+                    people=[
+                        entry[0] for entry in self.db_adapter.select("person", ["id"])
+                    ],
+                )
+                shift_fairness.compute()
+                analytics_instances[f"Shift fairness ({shift_id})"] = shift_fairness
+        else:
+            self.draw_indented_list(["Fairness (skipped)"])
 
         # sequences
         sequence = Sequences(self.db_adapter)
@@ -698,17 +708,20 @@ class FlawDrawer(BaseDrawer):
         analytics_instances[f"Week worktime"] = week_worktime
 
         # preferences
-        for i, preference_data in enumerate(
-            self.model_config_data.get("preference_obj", [])
-        ):
-            preference = WorkerPreference(
-                self.db_adapter,
-                primary_people=preference_data["primary_people"],
-                secondary_people=preference_data["secondary_people"],
-                shift=preference_data["shift"],
-            )
-            preference.compute()
-            analytics_instances[f"Preference"] = preference
+        if self.model_config_data is not None:
+            for i, preference_data in enumerate(
+                self.model_config_data.get("preference_obj", [])
+            ):
+                preference = WorkerPreference(
+                    self.db_adapter,
+                    primary_people=preference_data["primary_people"],
+                    secondary_people=preference_data["secondary_people"],
+                    shift=preference_data["shift"],
+                )
+                preference.compute()
+                analytics_instances[f"Preference"] = preference
+        else:
+            self.draw_indented_list(["Preference (skipped)"])
 
         self.draw_sep(104)
         self.draw_indented_list(
