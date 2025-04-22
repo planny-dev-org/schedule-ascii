@@ -209,7 +209,7 @@ class BaseDrawer:
             self.draw_list(
                 [
                     shift_id,
-                    round(duration / 3600, 1),
+                    round(duration, 1),
                     start_time,
                     end_time,
                     ascii_display,
