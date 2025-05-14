@@ -600,7 +600,6 @@ class CapacityDrawer(BaseDrawer):
         # draw hours
         to_do_hours = 0
         contract_hours = 0
-        available_hours = 0
         to_do_night_hours = 0
         to_do_weekend_hours = 0
         schedule_analytics = ScheduleAnalytics(self.db_adapter)
@@ -617,12 +616,10 @@ class CapacityDrawer(BaseDrawer):
         for person_id, activity_rate, standard_weektime_hours in self.db_adapter.select(
             "person", ["id", "activity_rate", "standard_weektime_hours"]
         ):
+            holiday_days = self.db_adapter.select_shift_tasks("HOL", person=person_id)
+            contract_days = len(week_days) - len(holiday_days)
             contract_hours += (
-                len(week_days) * activity_rate * standard_weektime_hours / 500
-            )
-            available_days = self.db_adapter.select_person_available_days(person_id)
-            available_hours += (
-                len(available_days) * activity_rate * standard_weektime_hours / 500
+                contract_days * activity_rate * standard_weektime_hours / 500
             )
 
         for day, min_value, shift_id in self.db_adapter.select(
