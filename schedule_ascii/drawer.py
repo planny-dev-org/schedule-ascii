@@ -717,7 +717,9 @@ class FlawDrawer(BaseDrawer):
                     shift=preference_data["shift"],
                 )
                 preference.compute()
-                analytics_instances[f"Preference"] = preference
+                analytics_instances[f"Preference ({preference_data['shift']})"] = (
+                    preference
+                )
         else:
             self.draw_indented_list(["Preference (skipped)"])
 
