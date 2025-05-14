@@ -98,7 +98,7 @@ class BaseDrawer:
             "8",
             "9",
             "0",
-        ] * 10
+        ]
         holiday_shift = self.db_adapter.select("shift", ["id"], "id='HOL'")
         if holiday_shift:
             self.db_adapter.update(
@@ -638,12 +638,13 @@ class CapacityDrawer(BaseDrawer):
             if day in weekend_days:
                 to_do_weekend_hours += cov_duration
 
-        self.draw_indented_list(["to do hours"] + [round(to_do_hours, 0)])
-        self.draw_indented_list(["to do night hours"] + [round(to_do_night_hours, 0)])
+        self.draw_indented_list(["total todo (h)"] + [round(to_do_hours, 0)])
+        self.draw_indented_list([".. night todo (h)"] + [round(to_do_night_hours, 0)])
         self.draw_indented_list(
-            ["to do weekend hours"] + [round(to_do_weekend_hours, 0)]
+            [".. weekend todo (h)"] + [round(to_do_weekend_hours, 0)]
         )
         self.draw_indented_list(["contractual hours"] + [round(contract_hours, 0)])
+        self.draw_sep()
 
 
 class FlawDrawer(BaseDrawer):
@@ -723,7 +724,7 @@ class FlawDrawer(BaseDrawer):
         else:
             self.draw_indented_list(["Preference (skipped)"])
 
-        self.draw_sep(104)
+        self.draw_sep()
         self.draw_indented_list(
             ["objective efficiency", "score", "flaws min", "flaws", "flaws max"], 40, 25
         )

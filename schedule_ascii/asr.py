@@ -54,7 +54,7 @@ def get_days_int_by_month(start_date, end_date):
     # adjust first month start and last month end
     ret = []
     for iso_start, iso_end in iso_days:
-        ret.append([(iso_start - start_date).days, (iso_end - start_date).days + 1])
+        ret.append([(iso_start - start_date).days, (iso_end - start_date).days])
 
     return ret
 
@@ -69,7 +69,7 @@ def split_json(input_json_path):
     input_data = json.load(open(input_json_path))
     start_date = datetime.date.fromisoformat(input_data["schedule"]["start_day"])
     end_date = start_date + datetime.timedelta(
-        days=input_data["schedule"]["num_of_days"]
+        days=input_data["schedule"]["num_of_days"] - 1
     )
 
     if start_date > end_date:
@@ -87,13 +87,13 @@ def split_json(input_json_path):
         copy_data["schedule"]["start_day"] = (
             start_date + datetime.timedelta(days=start_day_int)
         ).isoformat()
-        copy_data["schedule"]["num_of_days"] = end_day_int - start_day_int
+        copy_data["schedule"]["num_of_days"] = end_day_int + 1 - start_day_int
 
         # update coverages
         updated_coverages = []
         for coverage_data in copy_data["coverages"]:
             updated_day_index = coverage_data["day"] - start_day_int
-            if 0 < updated_day_index < copy_data["schedule"]["num_of_days"]:
+            if 0 <= updated_day_index < copy_data["schedule"]["num_of_days"]:
                 # only include index inside this month
                 coverage_data["day"] = updated_day_index
                 updated_coverages.append(coverage_data)
@@ -106,7 +106,7 @@ def split_json(input_json_path):
                 updated_days_index = []
                 for day_int in day_exclusion_data["days"]:
                     updated_day_index = day_int - start_day_int
-                    if updated_day_index > 0:
+                    if updated_day_index >= 0:
                         updated_days_index.append(updated_day_index)
                 if (
                     updated_days_index
@@ -121,7 +121,7 @@ def split_json(input_json_path):
         updated_preallocations = []
         for preallocation_data in copy_data["preallocations"]:
             updated_day_index = preallocation_data["day"] - start_day_int
-            if updated_day_index > 0:
+            if updated_day_index >= 0:
                 preallocation_data["day"] = updated_day_index
                 updated_preallocations.append(preallocation_data)
         copy_data["preallocations"] = updated_preallocations
