@@ -484,10 +484,11 @@ class WorkerPreference(FlawsAnalytic):
         # estimate flaws
         tasks = self.db_adapter.select_shift_tasks(shift_id=self.shift)
         for task, person in tasks:
-            flaw = 0
-            if person not in self.primary_people:
+            if person in self.primary_people:
+                flaw = 0
+            elif person in self.secondary_people:
                 flaw = 1
-            elif person not in self.secondary_people:
+            else:
                 flaw = 3
 
             self.flaws += flaw
