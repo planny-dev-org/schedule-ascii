@@ -31,15 +31,6 @@ class JSONParser:
         :return:
         """
 
-        for i, bank_holiday in enumerate(self.json_data["schedule"]["bank_holidays"]):
-            db_adapter.insert(
-                "bank_holiday",
-                (
-                    i,
-                    bank_holiday,
-                ),
-            )
-
         db_adapter.insert(
             "schedule",
             (
@@ -51,6 +42,16 @@ class JSONParser:
         schedule_start = datetime.date.fromisoformat(
             self.json_data["schedule"]["start_day"]
         )
+
+        for i, bank_holiday in enumerate(self.json_data["schedule"]["bank_holidays"]):
+            day_int = (datetime.date.fromisoformat(bank_holiday) - schedule_start).days
+            db_adapter.insert(
+                "bank_holiday",
+                (
+                    i,
+                    day_int,
+                ),
+            )
 
         for person_data in self.json_data["people"]:
             db_adapter.insert(
