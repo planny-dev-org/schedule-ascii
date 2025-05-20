@@ -160,7 +160,7 @@ class DBAdapter:
             SELECT sum(duration) FROM task INNER JOIN shift ON shift.id=task.shift_id
         """
         LOG.debug(request)
-        return self.cur.execute(request).fetchall()[0][0]
+        return self.cur.execute(request).fetchall()[0][0] / 60
 
     def select_person_tasks(self, person_id, days=None):
         """

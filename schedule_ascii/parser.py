@@ -77,7 +77,7 @@ class JSONParser:
                     shift_data["id"],
                     shift_data["display_name"],
                     "",
-                    shift_data["effective_duration"] / 3600,
+                    shift_data["work_time"] / 60,
                     shift_data["start_time"],
                     shift_data["end_time"],
                 ),
@@ -208,7 +208,7 @@ class JSONParser:
 
         for person_id, effective_hours in db_adapter.select_person_effective_hours():
             db_adapter.update(
-                "person", f"id='{person_id}'", f"effective_hours={effective_hours}"
+                "person", f"id='{person_id}'", f"effective_hours={effective_hours/ 60}"
             )
 
         # establish int days used to compute hours targets

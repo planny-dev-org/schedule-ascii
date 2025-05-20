@@ -13,7 +13,7 @@ def iso_time_to_minutes(iso_time):
     """
     hours, minutes, _ = iso_time.split(":")
 
-    return int(hours) * 3600 + int(minutes)
+    return int(hours) * 60 + int(minutes)
 
 
 def standard_deviation(values):
@@ -65,9 +65,10 @@ class ScheduleAnalytics(DBAnalytics):
         for min_value, max_value, shift_id in self.db_adapter.select(
             "coverage", ["min_value", "max_value", "shift_id"]
         ):
-            shift_duration = self.db_adapter.select(
-                "shift", ["duration"], f"id='{shift_id}'"
-            )[0][0]
+            shift_duration = (
+                self.db_adapter.select("shift", ["duration"], f"id='{shift_id}'")[0][0]
+                / 60
+            )
             self.min_coverage_work_hours += min_value * shift_duration
             self.max_coverage_work_hours += max_value * shift_duration
 
@@ -384,7 +385,7 @@ class WeekWorktime(FlawsAnalytic):
     Estimate quality of week worktime
     """
 
-    max_worktime_minutes: int = 50 * 3600  # 50 hours
+    max_worktime_minutes: int = 50 * 60  # 50 hours
 
     def compute(self):
         time_span = self.db_adapter.select("schedule", ["time_span_days"])[0][0]
@@ -413,12 +414,12 @@ class WeekWorktime(FlawsAnalytic):
                     end_time = iso_time_to_minutes(end_time)
                     if start_time > end_time:
                         duration -= (
-                            24 * 3600
+                            24 * 60
                         ) - start_time  # remove time from start_time to midnight on previous day
 
                 # remove last day task duration after midnight (if exists)
                 last_day_tasks = self.db_adapter.select_person_tasks(
-                    person[0], days=[day - 1]
+                    person[0], days=[day + 6]
                 )
                 for _, _, _, start_time, end_time in last_day_tasks:
                     start_time = iso_time_to_minutes(start_time)

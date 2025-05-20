@@ -209,7 +209,7 @@ class BaseDrawer:
             self.draw_list(
                 [
                     shift_id,
-                    round(duration, 1),
+                    round(duration / 60, 1),
                     start_time,
                     end_time,
                     ascii_display,
@@ -628,7 +628,7 @@ class CapacityDrawer(BaseDrawer):
             start_time, end_time, duration = self.db_adapter.select(
                 "shift", ["start_time", "end_time", "duration"], f"id='{shift_id}'"
             )[0]
-            cov_duration = min_value * duration
+            cov_duration = min_value * (duration / 60)
             to_do_hours += cov_duration
             if start_time > end_time:
                 to_do_night_hours += cov_duration
