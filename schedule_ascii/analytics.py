@@ -447,6 +447,9 @@ class WorkerPreference(FlawsAnalytic):
     primary_people: List[str] = dataclasses.field(default_factory=list)
     secondary_people: List[str] = dataclasses.field(default_factory=list)
     shift: str = ""
+    start_date_int: int = 0
+    end_date_int: int = 999
+
     # TODO: see if weekdays is needed
     #    weekdays: List[int] = dataclasses.field(default_factory=list)
 
@@ -459,7 +462,7 @@ class WorkerPreference(FlawsAnalytic):
         coverages = self.db_adapter.select(
             "coverage",
             ["max_value"],
-            f"shift_id='{self.shift}'",
+            f"shift_id='{self.shift}' AND day>={self.start_date_int} AND day<={self.end_date_int}",
         )
         self.flaws_max = 3 * sum([max_val[0] for max_val in coverages])
 
@@ -482,7 +485,9 @@ class WorkerPreference(FlawsAnalytic):
                 self.flaws_min += 1
 
         # estimate flaws
-        tasks = self.db_adapter.select_shift_tasks(shift_id=self.shift)
+        tasks = self.db_adapter.select_shift_tasks(
+            shift_id=self.shift, days=range(self.start_date_int, self.end_date_int)
+        )
         for task, person in tasks:
             if person in self.primary_people:
                 flaw = 0

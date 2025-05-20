@@ -715,11 +715,13 @@ class FlawDrawer(BaseDrawer):
                     primary_people=preference_data["primary_people"],
                     secondary_people=preference_data["secondary_people"],
                     shift=preference_data["shift"],
+                    start_date_int=preference_data["start_date_int"],
+                    end_date_int=preference_data["end_date_int"],
                 )
                 preference.compute()
-                analytics_instances[f"Preference ({preference_data['shift']})"] = (
-                    preference
-                )
+                analytics_instances[
+                    f"Preference ({preference_data['shift']}, {preference_data['start_date_int']})"
+                ] = preference
         else:
             self.draw_indented_list(["Preference (skipped)"])
 
