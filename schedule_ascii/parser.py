@@ -21,12 +21,6 @@ class JSONParser:
 
     def store(self, db_adapter):
         """
-        person(name, activity_rate, night_shifts, weekend_shifts, target_hours, holiday_hours, work_hours, debt_hours)
-        shift(name, display_name, duration, start_time, end_time)
-        task(person, day, shift)
-        shift_label(shift_id, label)
-        task_label(task_id, label)
-
         Store json data to db tables
         :return:
         """
@@ -45,13 +39,14 @@ class JSONParser:
 
         for i, bank_holiday in enumerate(self.json_data["schedule"]["bank_holidays"]):
             day_int = (datetime.date.fromisoformat(bank_holiday) - schedule_start).days
-            db_adapter.insert(
-                "bank_holiday",
-                (
-                    i,
-                    day_int,
-                ),
-            )
+            if day_int >= 0:  # bank holidays may be out of schedule days
+                db_adapter.insert(
+                    "bank_holiday",
+                    (
+                        i,
+                        day_int,
+                    ),
+                )
 
         for person_data in self.json_data["people"]:
             db_adapter.insert(
@@ -78,6 +73,7 @@ class JSONParser:
                     shift_data["display_name"],
                     "",
                     shift_data["work_time"] / 60,
+                    shift_data["effective_duration"] / 60,
                     shift_data["start_time"],
                     shift_data["end_time"],
                 ),
@@ -233,7 +229,7 @@ class JSONParser:
                 f"holiday_hours={holidays_count * (activity_rate / 100) * standard_weektime_hours / 5}",
             )
 
-            # remove holidays from int days target
+            # remove holidays & bank holidays from int days target
             target_days_count = len(target_int_days) - holidays_count
             db_adapter.update(
                 "person",

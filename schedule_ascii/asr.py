@@ -12,6 +12,17 @@ from schedule_ascii.drawer import ScheduleDrawer, CapacityDrawer, FlawDrawer
 logging.basicConfig()
 
 
+def get_last_month_day(iso_day):
+    """
+    Return the last day of the month given iso day
+    """
+    for day in [31, 30, 29, 28, 27]:
+        try:
+            return datetime.date(year=iso_day.year, month=iso_day.month, day=day)
+        except ValueError:
+            continue
+
+
 def get_iso_months(start_date, end_date):
     """
     Return a list of elements like:
@@ -31,7 +42,7 @@ def get_iso_months(start_date, end_date):
     while day <= end_first_day:
         date_plus_one_month = day + datetime.timedelta(days=31)
 
-        ret.append([day, (date_plus_one_month - datetime.timedelta(days=1))])
+        ret.append([day, get_last_month_day(day)])
 
         day = datetime.date(
             year=date_plus_one_month.year, month=date_plus_one_month.month, day=1
@@ -48,7 +59,7 @@ def get_days_int_by_month(start_date, end_date):
     """
     get int days by months, example for 2025-05-15 to 2025-06-20 => ((0, 16), (17, 37))
     0, 16 is the May int days range (first month)
-    17, 37 is the June int days range (second / last month)
+    17, 37 is the June int days range (second month)
     """
     iso_days = get_iso_months(start_date, end_date)
     # adjust first month start and last month end

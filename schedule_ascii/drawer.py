@@ -186,7 +186,15 @@ class BaseDrawer:
         :return:
         """
         self.draw_list(
-            ["shift id", "duration", "start_time", "end_time", "display", "count"]
+            [
+                "shift id",
+                "work_duration",
+                "eff_duration",
+                "start_time",
+                "end_time",
+                "display",
+                "count",
+            ]
         )
         total_count = 0
         for shift_data in self.db_adapter.select(
@@ -195,21 +203,29 @@ class BaseDrawer:
                 "id",
                 "display_name",
                 "ascii_display",
-                "duration",
+                "eff_duration",
+                "work_duration",
                 "start_time",
                 "end_time",
             ],
         ):
-            shift_id, display_name, ascii_display, duration, start_time, end_time = (
-                shift_data
-            )
+            (
+                shift_id,
+                display_name,
+                ascii_display,
+                work_duration,
+                eff_duration,
+                start_time,
+                end_time,
+            ) = shift_data
             task_count = len(
                 self.db_adapter.select("task", ["id"], f"shift_id='{shift_id}'")
             )
             self.draw_list(
                 [
                     shift_id,
-                    round(duration / 60, 1),
+                    round(work_duration / 60, 1),
+                    round(eff_duration / 60, 1),
                     start_time,
                     end_time,
                     ascii_display,
@@ -413,7 +429,7 @@ class ScheduleDrawer(BaseDrawer):
             preals = self.db_adapter.select_person_preals(person_data[0])
             task_items = {}
             preal_items = {}
-            for display, day, _, _, _ in tasks:
+            for display, day, _, _, _, _ in tasks:
                 task_items[day] = display
             for display, day, _ in preals:
                 preal_items[day] = display
@@ -494,14 +510,21 @@ class CapacityDrawer(BaseDrawer):
                 "id",
                 "display_name",
                 "ascii_display",
-                "duration",
+                "work_duration",
+                "eff_duration",
                 "start_time",
                 "end_time",
             ],
         ):
-            shift_id, display_name, ascii_display, duration, start_time, end_time = (
-                shift_data
-            )
+            (
+                shift_id,
+                display_name,
+                ascii_display,
+                work_duration,
+                eff_duration,
+                start_time,
+                end_time,
+            ) = shift_data
 
             capacities_data = [f"{shift_id} capacity"]
             min_coverage_data = [f"{shift_id} min coverage"]
@@ -625,10 +648,10 @@ class CapacityDrawer(BaseDrawer):
         for day, min_value, shift_id in self.db_adapter.select(
             "coverage", ["day", "min_value", "shift_id"]
         ):
-            start_time, end_time, duration = self.db_adapter.select(
-                "shift", ["start_time", "end_time", "duration"], f"id='{shift_id}'"
+            start_time, end_time, eff_duration = self.db_adapter.select(
+                "shift", ["start_time", "end_time", "eff_duration"], f"id='{shift_id}'"
             )[0]
-            cov_duration = min_value * (duration / 60)
+            cov_duration = min_value * (eff_duration / 60)
             to_do_hours += cov_duration
             if start_time > end_time:
                 to_do_night_hours += cov_duration

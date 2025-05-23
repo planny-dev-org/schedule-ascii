@@ -37,7 +37,7 @@ class DBAdapter:
             "CREATE TABLE person(id VARCHAR PRIMARY KEY, activity_rate, standard_weektime_hours, night_count, weekend_count, target_hours, holiday_hours, effective_hours, debt_hours)"
         )
         self.cur.execute(
-            "CREATE TABLE shift(id VARCHAR PRIMARY KEY, display_name, ascii_display, duration, start_time, end_time)"
+            "CREATE TABLE shift(id VARCHAR PRIMARY KEY, display_name, ascii_display, work_duration, eff_duration, start_time, end_time)"
         )
         self.cur.execute(
             "CREATE TABLE task(id INTEGER PRIMARY KEY, person_id, shift_id, day, FOREIGN KEY (shift_id) REFERENCES shift(id), FOREIGN KEY (person_id) REFERENCES person(id))"
@@ -147,7 +147,7 @@ class DBAdapter:
         Sum effective hours for each person
         """
         request = f"""
-            SELECT person_id, sum(duration) FROM task INNER JOIN shift ON shift.id=task.shift_id GROUP BY person_id
+            SELECT person_id, sum(eff_duration) FROM task INNER JOIN shift ON shift.id=task.shift_id GROUP BY person_id
         """
         LOG.debug(request)
         return self.cur.execute(request).fetchall()
@@ -157,7 +157,7 @@ class DBAdapter:
         Sum of all effective hours in the schedule
         """
         request = f"""
-            SELECT sum(duration) FROM task INNER JOIN shift ON shift.id=task.shift_id
+            SELECT sum(eff_duration) FROM task INNER JOIN shift ON shift.id=task.shift_id
         """
         LOG.debug(request)
         return self.cur.execute(request).fetchall()[0][0] / 60
@@ -167,7 +167,7 @@ class DBAdapter:
         Select person tasks
         """
         request = f"""
-            SELECT ascii_display, day, duration, start_time, end_time FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE person_id='{person_id}'
+            SELECT ascii_display, day, work_duration, eff_duration, start_time, end_time FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE person_id='{person_id}'
         """
         if days:
             request = f"{request} AND day IN ({','.join([str(day) for day in days])})"

@@ -66,7 +66,9 @@ class ScheduleAnalytics(DBAnalytics):
             "coverage", ["min_value", "max_value", "shift_id"]
         ):
             shift_duration = (
-                self.db_adapter.select("shift", ["duration"], f"id='{shift_id}'")[0][0]
+                self.db_adapter.select("shift", ["eff_duration"], f"id='{shift_id}'")[
+                    0
+                ][0]
                 / 60
             )
             self.min_coverage_work_hours += min_value * shift_duration
@@ -122,14 +124,14 @@ class ScheduleAnalytics(DBAnalytics):
             "schedule", ["start_day", "time_span_days"]
         )[0]
         start_date = datetime.date.fromisoformat(start_date)
-        bank_holidays = self.db_adapter.select("bank_holiday", ["day"])
+        bank_holidays = [
+            bank_holiday[0]
+            for bank_holiday in self.db_adapter.select("bank_holiday", ["day"])
+        ]
         target_int_days = []
         for i in range(days_count):
             iso_day = start_date + datetime.timedelta(days=i)
-            if (
-                iso_day.weekday() not in [5, 6]
-                and iso_day.isoformat() not in bank_holidays
-            ):
+            if iso_day.weekday() not in [5, 6] and i not in bank_holidays:
                 target_int_days.append(i)
 
         return target_int_days
@@ -403,13 +405,15 @@ class WeekWorktime(FlawsAnalytic):
                 tasks = self.db_adapter.select_person_tasks(
                     person[0], days=[a for a in range(day, day + 7)]
                 )
-                duration = sum([duration for _, _, duration, _, _ in tasks])
+                duration = sum(
+                    [work_duration for _, _, work_duration, _, _, _ in tasks]
+                )
 
                 # add previous day task duration from midnight to end_time (if exists)
                 previous_day_tasks = self.db_adapter.select_person_tasks(
                     person[0], days=[day - 1]
                 )
-                for _, _, _, start_time, end_time in previous_day_tasks:
+                for _, _, _, _, start_time, end_time in previous_day_tasks:
                     start_time = iso_time_to_minutes(start_time)
                     end_time = iso_time_to_minutes(end_time)
                     if start_time > end_time:
@@ -421,7 +425,7 @@ class WeekWorktime(FlawsAnalytic):
                 last_day_tasks = self.db_adapter.select_person_tasks(
                     person[0], days=[day + 6]
                 )
-                for _, _, _, start_time, end_time in last_day_tasks:
+                for _, _, _, _, start_time, end_time in last_day_tasks:
                     start_time = iso_time_to_minutes(start_time)
                     end_time = iso_time_to_minutes(end_time)
                     if start_time > end_time:
