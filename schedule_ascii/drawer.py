@@ -188,8 +188,8 @@ class BaseDrawer:
         self.draw_list(
             [
                 "shift id",
-                "work_duration",
                 "eff_duration",
+                "work_duration",
                 "start_time",
                 "end_time",
                 "display",

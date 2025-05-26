@@ -114,6 +114,10 @@ class JSONParser:
                 task_data["shift"] = "HOL" if task_data["type"] == "VACATION" else "OFF"
             task_date = datetime.date.fromisoformat(task_data["day"])
             task_date_int = (task_date - schedule_start).days
+            if not 0 <= task_date_int <= self.json_data["schedule"]["num_of_days"]:
+                raise ValueError(
+                    f"task day {task_data['day']} is outside schedule time span"
+                )
             db_adapter.insert(
                 "task",
                 (
