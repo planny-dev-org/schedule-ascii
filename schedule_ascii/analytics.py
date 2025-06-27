@@ -225,7 +225,7 @@ class ShiftFairness(FlawsAnalytic):
     """
 
     people: List[str] = dataclasses.field(default_factory=list)
-    shift: str = ""
+    shifts: List[str] = dataclasses.field(default_factory=list)
     days: List[int] = dataclasses.field(default_factory=list)
 
     def compute(self):
@@ -236,7 +236,7 @@ class ShiftFairness(FlawsAnalytic):
             self.days = [day_int for day_int in range(schedule_analytics.time_span)]
 
         shift_count = len(
-            self.db_adapter.select_shift_tasks(self.shift, days=self.days)
+            self.db_adapter.select_shift_tasks(self.shifts, days=self.days)
         )
         average = round(shift_count / len(self.people), 1)
         low_average = int(average)
@@ -248,7 +248,7 @@ class ShiftFairness(FlawsAnalytic):
         self.flaws_max = shift_count - high_average
 
         for person in self.people:
-            shift_tasks = self.db_adapter.select_shift_tasks(self.shift, person=person)
+            shift_tasks = self.db_adapter.select_shift_tasks(self.shifts, person=person)
             if shift_tasks:
                 task_count = len(shift_tasks)
                 if task_count >= high_average:
@@ -491,7 +491,7 @@ class WorkerPreference(FlawsAnalytic):
 
         # estimate flaws
         tasks = self.db_adapter.select_shift_tasks(
-            shift_id=self.shift, days=range(self.start_date_int, self.end_date_int)
+            [self.shift], days=range(self.start_date_int, self.end_date_int)
         )
         for task, person in tasks:
             if person in self.primary_people:

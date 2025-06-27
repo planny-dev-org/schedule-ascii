@@ -232,12 +232,13 @@ class DBAdapter:
 
         return available_days
 
-    def select_shift_tasks(self, shift_id, days=None, person=""):
+    def select_shift_tasks(self, shift_ids, days=None, person=""):
         """
         Select shift tasks
         """
+        shifts_str = ",".join(["'" + shift_id_str + "'" for shift_id_str in shift_ids])
         request = f"""
-            SELECT task.id, task.person_id FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE shift_id='{shift_id}'
+            SELECT task.id, task.person_id FROM task INNER JOIN shift ON shift.id=task.shift_id WHERE shift_id IN ({shifts_str})
         """
         if days:
             request += f"AND day IN ({','.join([str(day) for day in days])})"
