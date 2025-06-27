@@ -639,7 +639,7 @@ class CapacityDrawer(BaseDrawer):
         for person_id, activity_rate, standard_weektime_hours in self.db_adapter.select(
             "person", ["id", "activity_rate", "standard_weektime_hours"]
         ):
-            holiday_days = self.db_adapter.select_shift_tasks("HOL", person=person_id)
+            holiday_days = self.db_adapter.select_shift_tasks(["HOL"], person=person_id)
             contract_days = len(week_days) - len(holiday_days)
             contract_hours += (
                 contract_days * activity_rate * standard_weektime_hours / 500
@@ -704,17 +704,17 @@ class FlawDrawer(BaseDrawer):
         # fairness
         if self.model_config_data is not None:
             for fairness_objective in self.model_config_data.get("shift_fairness_obj"):
-                shift_id = fairness_objective["shift_id"]
+                shift_ids = fairness_objective["shift_ids"]
                 # TODO: use a person group when available in scheduler
                 shift_fairness = ShiftFairness(
                     self.db_adapter,
-                    shift=shift_id,
+                    shifts=shift_ids,
                     people=[
                         entry[0] for entry in self.db_adapter.select("person", ["id"])
                     ],
                 )
                 shift_fairness.compute()
-                analytics_instances[f"Shift fairness ({shift_id})"] = shift_fairness
+                analytics_instances[f"Shift fairness {str(shift_ids)}"] = shift_fairness
         else:
             self.draw_indented_list(["Fairness (skipped)"])
 
